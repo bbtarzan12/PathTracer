@@ -12,6 +12,7 @@ public:
 	virtual Ray GenerateRay(int x, int y) const = 0;
 	virtual void UpdateScreen(int width, int height) = 0;
 	virtual void UpdateCamera(float deltaTime, glm::vec2 keyboard = glm::vec2(0, 0), glm::vec2 mouse = glm::vec2(0, 0), bool bForce = false) = 0;
+	virtual void HandleInput(float deltaTime, int key) = 0;
 	virtual void ResetDirty() { dirty = false; }
 
 public:

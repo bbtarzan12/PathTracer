@@ -219,8 +219,21 @@ void CPURenderer::HandleMouseMotion(double xPos, double yPos)
 
 void CPURenderer::HandleResize(int width, int height)
 {
+	rendererOption.width = width;
+	rendererOption.height = height;
+
 	camera->UpdateScreen(width, height);
 	glViewport(0, 0, width, height);
+
+	glBindTexture(GL_TEXTURE_2D, rayTextureID);
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL); 
+	}
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	delete frameBuffer;
+	frameBuffer = new float[width * height * 3];
+	frame = 1;
 }
 
 void CPURenderer::Render(double deltaTime)
@@ -303,6 +316,26 @@ void CPURenderer::Update(double deltaTime)
 {
 	glm::vec2 input = glm::vec2(GLFWManager::IsKeyDown(GLFW_KEY_W) ? 1 : GLFWManager::IsKeyDown(GLFW_KEY_S) ? -1 : 0, GLFWManager::IsKeyDown(GLFW_KEY_D) ? 1 : GLFWManager::IsKeyDown(GLFW_KEY_A) ? -1 : 0);
 	camera->UpdateCamera(deltaTime, input);
+
+	if (GLFWManager::IsKeyDown(GLFW_KEY_Z))
+	{
+		camera->HandleInput(deltaTime, GLFW_KEY_Z);
+	}
+
+	if (GLFWManager::IsKeyDown(GLFW_KEY_X))
+	{
+		camera->HandleInput(deltaTime, GLFW_KEY_X);
+	}
+
+	if (GLFWManager::IsKeyDown(GLFW_KEY_C))
+	{
+		camera->HandleInput(deltaTime, GLFW_KEY_C);
+	}
+
+	if (GLFWManager::IsKeyDown(GLFW_KEY_V))
+	{
+		camera->HandleInput(deltaTime, GLFW_KEY_V);
+	}
 }
 
 glm::vec3 CPURenderer::CastRay(const Ray& ray, int maxDepth, int numIndirectSample, float epsilon)

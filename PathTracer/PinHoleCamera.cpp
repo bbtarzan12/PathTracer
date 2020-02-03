@@ -4,6 +4,7 @@
 #include <glm/ext/matrix_transform.inl>
 #include <glm/ext/matrix_clip_space.inl>
 #include <iostream>
+#include <GLFW/glfw3.h>
 
 PinHoleCamera::PinHoleCamera(glm::uvec2 size, float fov, float focalLength, float aperture, glm::vec2 clippingPlanes)
 	:
@@ -92,6 +93,31 @@ void PinHoleCamera::UpdateCamera(float deltaTime, glm::vec2 keyboard, glm::vec2 
 
 	view = glm::lookAt(position, position + forward, up);
 	proj = glm::perspective(glm::radians(fov), aspectRatio, clippingPlanes.x, clippingPlanes.y);
+
+	dirty = true;
+}
+
+void PinHoleCamera::HandleInput(float deltaTime, int key)
+{
+	if (key == GLFW_KEY_Z)
+	{
+		aperture += 0.1f;
+	}
+
+	if (key == GLFW_KEY_X)
+	{
+		aperture -= 0.1f;
+	}
+
+	if (key == GLFW_KEY_C)
+	{
+		focalLength += 0.1f;
+	}
+
+	if (key == GLFW_KEY_V)
+	{
+		focalLength -= 0.1f;
+	}
 
 	dirty = true;
 }
