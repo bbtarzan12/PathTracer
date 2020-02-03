@@ -7,11 +7,13 @@ out vec3 Position_worldspace;
 out vec3 Normal_cameraspace;
 out vec3 EyeDirection_cameraspace;
 out vec3 LightDirection_cameraspace;
+out vec3 DiffuseColor;
 
 uniform mat4 MVP;
 uniform mat4 V;
 uniform mat4 M;
 uniform vec3 LightPosition_worldspace;
+uniform vec3 Color;
 
 void main()
 {
@@ -32,4 +34,6 @@ void main()
 
 	// Normal of the the vertex, in camera space
 	Normal_cameraspace = (V * M * vec4(vertexNormal_modelspace, 0)).xyz; // Only correct if ModelMatrix does not scale the model ! Use its inverse transpose if not.
+
+	DiffuseColor = Color;
 }

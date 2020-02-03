@@ -19,6 +19,8 @@ CPURenderer::CPURenderer(RendererOption rendererOption)
 
 CPURenderer::~CPURenderer()
 {
+	std::cout << "[Renderer] Release CPURenderer" << std::endl;
+	glDeleteTextures(1, &rayTextureID);
 	FreeImage_DeInitialise();
 	delete frameBuffer;
 }
@@ -35,6 +37,7 @@ void CPURenderer::Init()
 		viewMatrixID = glGetUniformLocation(shaderID, "V");
 		modelMatrixID = glGetUniformLocation(shaderID, "M");
 		lightID = glGetUniformLocation(shaderID, "LightPosition_worldspace");
+		colorID = glGetUniformLocation(shaderID, "Color");
 	}
 
 	{
@@ -258,6 +261,7 @@ void CPURenderer::Render(double deltaTime)
 			glUniformMatrix4fv(viewMatrixID, 1, GL_FALSE, &camera->view[0][0]);
 			glUniformMatrix4fv(modelMatrixID, 1, GL_FALSE, &shape->model[0][0]);
 			glUniform3f(lightID, 0, 0, 0);
+			glUniform3f(colorID, shape->color.r, shape->color.g, shape->color.b);
 
 			shape->DrawOpenGL();
 
@@ -281,7 +285,7 @@ void CPURenderer::Render(double deltaTime)
 			previousColor.g = glm::pow(previousColor.g, PathTracing::GAMMA_DECODING);
 			previousColor.b = glm::pow(previousColor.b, PathTracing::GAMMA_DECODING);
 
-			glm::vec3 color = CastRay(ray, 3, 4);
+			glm::vec3 color = CastRay(ray, 5, 1);
 
 			resultColor = (previousColor * (float)(frame - 1) + color) / (float)frame;
 			frameBuffer[i * 3] = glm::pow(resultColor.r, PathTracing::GAMMA_COMPRESSION);
@@ -381,6 +385,10 @@ glm::vec3 CPURenderer::CastRay(const Ray& ray, int maxDepth, int numIndirectSamp
 
 		// Object Material Albedo
 		resultColor = (info.shape->emit * glm::one_over_pi<float>() + 2.0f * indirectColor) * info.shape->color;
+	}
+	else
+	{
+		resultColor = glm::vec3(1, 1, 1);
 	}
 
 	return resultColor;

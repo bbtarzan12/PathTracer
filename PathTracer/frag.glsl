@@ -6,12 +6,12 @@ in vec3 Position_worldspace;
 in vec3 Normal_cameraspace;
 in vec3 EyeDirection_cameraspace;
 in vec3 LightDirection_cameraspace;
+in vec3 DiffuseColor;
 
 // Ouput data
 out vec3 color;
 
 // Values that stay constant for the whole mesh.
-uniform sampler2D myTextureSampler;
 uniform mat4 MV;
 uniform vec3 LightPosition_worldspace;
 
@@ -24,7 +24,7 @@ void main()
 	float LightPower = 500.0f;
 
 	// Material properties
-	vec3 MaterialDiffuseColor = vec3(1, 1, 1);
+	vec3 MaterialDiffuseColor = DiffuseColor;
 	vec3 MaterialAmbientColor = vec3(0.1, 0.1, 0.1) * MaterialDiffuseColor;
 	vec3 MaterialSpecularColor = vec3(0.3, 0.3, 0.3);
 

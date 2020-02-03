@@ -50,7 +50,7 @@ private:
 	float* frameBuffer;
 
 	// OpenGL View
-	GLuint shaderID, lightID , matrixID, viewMatrixID, modelMatrixID;
+	GLuint shaderID, lightID, colorID, matrixID, viewMatrixID, modelMatrixID;
 
 	bool renderOpenGL;
 
