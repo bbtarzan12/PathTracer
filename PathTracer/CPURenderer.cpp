@@ -214,7 +214,7 @@ void CPURenderer::HandleMouseMotion(double xPos, double yPos)
 		int& height = rendererOption.height;
 
 		GLFWManager::SetCursorToPos(width / 2, height / 2);
-		glm::vec2 input = glm::vec2(height / 2 - yPos, width / 2 - xPos);
+		glm::vec2 input = glm::vec2(width / 2 - xPos, height / 2 - yPos);
 		camera->UpdateCamera(deltaTime, glm::vec2(0), input);
 		GLFWManager::SetCursorToPos(width / 2, height / 2);
 	}
