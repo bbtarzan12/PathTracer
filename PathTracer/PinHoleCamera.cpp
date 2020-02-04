@@ -6,11 +6,13 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 
-PinHoleCamera::PinHoleCamera(glm::uvec2 size, float fov, float focalLength, float aperture, glm::vec2 clippingPlanes)
+PinHoleCamera::PinHoleCamera(const glm::uvec2& size, float fov, float focalLength, float aperture, const glm::vec2& clippingPlanes)
 	:
 	up(0, 1, 0),
 	forward(0, 0, 1),
 	right(1, 0, 0),
+	yaw(0.0f),
+	pitch(90.0f),
 	size(size),
 	fov(fov),
 	focalLength(focalLength),
@@ -72,21 +74,23 @@ void PinHoleCamera::UpdateScreen(int width, int height)
 	dirty = true;
 }
 
-void PinHoleCamera::UpdateCamera(float deltaTime, glm::vec2 keyboard, glm::vec2 mouse, bool bForce)
+void PinHoleCamera::UpdateCamera(float deltaTime, const glm::vec2& keyboard, const glm::vec2& mouse, bool bForce)
 {
 	if (bForce == false && glm::length(keyboard) == 0 && glm::length(mouse) == 0)
 		return;
 
-	pitch += mouseSpeed * mouse.x * deltaTime;
-	yaw += mouseSpeed * mouse.y * deltaTime;
+	pitch -= mouseSpeed * mouse.y * deltaTime;
+	yaw += mouseSpeed * mouse.x * deltaTime;
 
-	pitch = glm::clamp(pitch, -89.0f, 89.0f);
-	yaw = glm::mod(yaw, 360.0f);
+	pitch = glm::clamp(pitch, 1.0f, 179.0f); // theta
+	yaw = glm::mod(yaw, 360.0f); // phi
+	
+	std::cout << pitch << " " << yaw << "\n";
 
 	position += (forward * keyboard.x + right * keyboard.y) * moveSpeed * deltaTime;
-	forward.x = glm::cos(glm::radians(pitch)) * glm::sin(glm::radians(yaw));
-	forward.y = glm::sin(glm::radians(pitch));
-	forward.z = glm::cos(glm::radians(pitch)) *glm::cos(glm::radians(yaw));
+	forward.x = glm::sin(glm::radians(pitch)) * glm::sin(glm::radians(yaw));
+	forward.y = glm::cos(glm::radians(pitch));
+	forward.z = glm::sin(glm::radians(pitch)) *glm::cos(glm::radians(yaw));
 	forward = glm::normalize(forward);
 	right = glm::normalize(glm::cross(forward, glm::vec3(0, 1, 0)));
 	up = glm::normalize(glm::cross(right, forward));

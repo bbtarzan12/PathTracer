@@ -5,11 +5,11 @@
 class PinHoleCamera : public Camera
 {
 public:
-	PinHoleCamera(glm::uvec2 size, float fov, float focalLength, float aperture, glm::vec2 clippingPlanes);
+	PinHoleCamera(const glm::uvec2& size, float fov, float focalLength, float aperture, const glm::vec2& clippingPlanes);
 
 	virtual Ray GenerateRay(int x, int y) const override;
 	virtual void UpdateScreen(int width, int height) override;
-	virtual void UpdateCamera(float deltaTime, glm::vec2 keyboard = glm::vec2(0, 0), glm::vec2 mouse = glm::vec2(0, 0), bool bForce = false) override;
+	virtual void UpdateCamera(float deltaTime, const glm::vec2& keyboard = glm::vec2(0, 0), const glm::vec2& mouse = glm::vec2(0, 0), bool bForce = false) override;
 	virtual void HandleInput(float deltaTime, int key) override;
 
 public:
@@ -22,6 +22,6 @@ public:
 	glm::vec2 clippingPlanes;
 	glm::uvec2 size;
 
-	float pitch, yaw;
+	float theta, phi;
 	float moveSpeed, mouseSpeed;
 };
