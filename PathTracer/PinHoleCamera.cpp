@@ -85,8 +85,6 @@ void PinHoleCamera::UpdateCamera(float deltaTime, const glm::vec2& keyboard, con
 	pitch = glm::clamp(pitch, 1.0f, 179.0f); // theta
 	yaw = glm::mod(yaw, 360.0f); // phi
 	
-	std::cout << pitch << " " << yaw << "\n";
-
 	position += (forward * keyboard.x + right * keyboard.y) * moveSpeed * deltaTime;
 	forward.x = glm::sin(glm::radians(pitch)) * glm::sin(glm::radians(yaw));
 	forward.y = glm::cos(glm::radians(pitch));

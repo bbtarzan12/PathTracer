@@ -12,7 +12,7 @@ Ray::Ray(const glm::vec3& origin, const glm::vec3& direction, float start, float
 
 }
 
-Ray::Ray(const glm::vec3& origin, const glm::vec3& direction, const Ray& parent, float start, float end /*= INFINITE*/, int d /*= 0*/)
+Ray::Ray(const glm::vec3& origin, const glm::vec3& direction, const Ray& parent, float start, float end /*= INFINITE*/)
 	: origin(origin), direction(direction), mint(start), maxt(end), depth(parent.depth + 1)
 {
 

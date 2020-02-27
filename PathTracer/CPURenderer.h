@@ -2,11 +2,13 @@
 
 #include "Renderer.h"
 #include <vector>
-#include "Sphere.h"
 #include <GL/glew.h>
 #include "Ray.h"
 
 struct IntersectInfo;
+
+class Shape;
+class Light;
 
 class CPURenderer : public Renderer
 {
@@ -14,7 +16,7 @@ public:
 	CPURenderer(RendererOption rendererOption);
 	virtual ~CPURenderer() override;
 
-	void Init();
+	void Init() override;
 	void SetCamera(const std::shared_ptr<Camera>& camera) override;
 	void Start() override;
 	void Release() override;
@@ -29,15 +31,9 @@ private:
 
 	// -------------------------------------------------------- RayTracing
 
-	glm::vec3 CastRay(const Ray& ray, int maxDepth, int numIndirectSample = 10, float epsilon = 0.005f);
+	glm::vec3 CastRay(const Ray& ray, int maxDepth, float epsilon = 0.005f);
 
 	bool TraceRay(const Ray& ray, IntersectInfo& info, float epsilon);
-
-	// Normal을 Up Vector로 하는 좌표계 만들기
-	void BuildLocalCoordinate(const glm::vec3& N, glm::vec3& Nt, glm::vec3& Nb);
-
-	// Local 좌표계에서 다시 World 좌표계로 변환
-	glm::vec3 LocalToWorld(const glm::vec3& v, const glm::vec3& N, const glm::vec3& Nt, const glm::vec3& Nb);
 	// --------------------------------------------------------
 
 private:
@@ -57,5 +53,6 @@ private:
 
 	// Scene
 	std::vector<std::shared_ptr<Shape>> shapes;
+	std::vector<std::shared_ptr<Light>> lights;
 
 };

@@ -10,10 +10,10 @@
 #include <glm/ext/scalar_constants.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp> 
-#include "IntersectInfo.h"
+#include "Random.h"
 
 Sphere::Sphere(const glm::vec3& center, float radius, const glm::vec3& color, const glm::vec3& emit)
-	: center(center), radius(radius), VAO(0), EBO(0), VBO(0), isInited(false), Shape(color, emit)
+	: Shape(color, emit), center(center), radius(radius), isInited(false), VAO(0), VBO(0), EBO(0)
 {
 	model = glm::translate(center) * glm::scale(glm::vec3(radius, radius, radius));
 	InitOpenGL();
@@ -50,6 +50,20 @@ bool Sphere::Intersect(const Ray& ray, float& tHit, glm::vec3& normal, float ray
 
 	normal = glm::normalize(oc);
 	return true;
+}
+
+float Sphere::GetArea() const
+{
+	return glm::two_pi<float>() * glm::two_pi<float>() * radius * radius;
+}
+
+std::tuple<glm::vec3, glm::vec3> Sphere::GetRandomPointOnSurface() const
+{
+	const auto[r1, r2] = PathTracing::RandomFloat2();
+	const glm::vec3 randomPoint = model * glm::vec4(PathTracing::UniformSampleSphere(r1, r2), 1.0f);
+	const glm::vec3 randomNormal = glm::normalize(model * glm::vec4(randomPoint - center, 0.0f));
+	
+	return std::make_tuple(randomPoint, randomNormal);
 }
 
 void Sphere::InitOpenGL()

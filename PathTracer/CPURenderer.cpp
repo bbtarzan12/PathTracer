@@ -1,6 +1,11 @@
 #include "CPURenderer.h"
 #include <iostream>
 #include <FreeImage/FreeImage.h>
+#include <glm/common.hpp>
+#include <glm/common.hpp>
+
+
+#include "AreaLight.h"
 #include "GLFWManager.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -10,6 +15,9 @@
 #include "IntersectInfo.h"
 #include "Random.h"
 #include "Common.h"
+#include "Math.h"
+#include "Sphere.h"
+#include "PointLight.h"
 
 CPURenderer::CPURenderer(RendererOption rendererOption)
 	: Renderer(rendererOption), renderOpenGL(true)
@@ -97,7 +105,7 @@ void CPURenderer::Init()
 
 	{
 		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(0, 1040, 0), 1000, glm::vec3(0.25f, 0.75f, 0.25f))));
-		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(0, -1010, 0), 1000)));
+		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(0, -1000, 0), 1000)));
 		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(1040, 0, 0), 1000, glm::vec3(0.75f, 0.25f, 0.25f))));
 		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(-1040, 0, 0), 1000)));
 		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(0, 0, 1040), 1000, glm::vec3(0.25f, 0.25f, 0.75f))));
@@ -105,7 +113,11 @@ void CPURenderer::Init()
 		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(20, 0, 14), 8, glm::vec3(1.0f, 0.15f, 0.15f))));
 		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(-14, 0, -20), 8, glm::vec3(0.15f, 1.0f, 1.0f))));
 		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(14, 0, -20), 8, glm::vec3(0.15f, 0.15f, 1.0f))));
-		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(0, 1, 0), 10, glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(5.0f, 5.0f, 5.0f))));
+		//shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(0, 5, 0), 8, glm::vec3(1.0f), glm::vec3(5))));
+		
+		//lights.push_back(std::make_shared<PointLight>(PointLight(glm::vec3(0, 10, 0), glm::vec3(1), 25)));
+		std::shared_ptr<Sphere> sphereLightShape = std::make_shared<Sphere>(Sphere(glm::vec3(0, 10, 0), 4, glm::vec3(1.0f), glm::vec3(1.0f)));
+		lights.push_back(std::make_shared<AreaLight>(AreaLight(sphereLightShape)));
 	}
 }
 
@@ -279,15 +291,14 @@ void CPURenderer::Render(double deltaTime)
 			Ray ray = camera->GenerateRay(x, y);
 
 			glm::vec3 previousColor(frameBuffer[i * 3], frameBuffer[i * 3 + 1], frameBuffer[i * 3 + 2]);
-			glm::vec3 resultColor(0, 0, 0);
 
 			previousColor.r = glm::pow(previousColor.r, PathTracing::GAMMA_DECODING);
 			previousColor.g = glm::pow(previousColor.g, PathTracing::GAMMA_DECODING);
 			previousColor.b = glm::pow(previousColor.b, PathTracing::GAMMA_DECODING);
 
-			glm::vec3 color = CastRay(ray, 5, 1);
+			glm::vec3 color = CastRay(ray, 3);
 
-			resultColor = (previousColor * (float)(frame - 1) + color) / (float)frame;
+			const glm::vec3 resultColor = (previousColor * (float)(frame - 1) + color) / (float)frame;
 			frameBuffer[i * 3] = glm::pow(resultColor.r, PathTracing::GAMMA_COMPRESSION);
 			frameBuffer[i * 3 + 1] = glm::pow(resultColor.g, PathTracing::GAMMA_COMPRESSION);
 			frameBuffer[i * 3 + 2] = glm::pow(resultColor.b, PathTracing::GAMMA_COMPRESSION);
@@ -342,65 +353,83 @@ void CPURenderer::Update(double deltaTime)
 	}
 }
 
-glm::vec3 CPURenderer::CastRay(const Ray& ray, int maxDepth, int numIndirectSample, float epsilon)
+glm::vec3 CPURenderer::CastRay(const Ray& ray, int maxDepth, float epsilon)
 {
 	if (ray.depth > maxDepth)
-		return glm::vec3(0, 0, 0);
+		return glm::vec3(0);
 
-	glm::vec3 resultColor(0, 0, 0);
 	IntersectInfo info;
 
-	if (TraceRay(ray, info, epsilon))
+	if (!TraceRay(ray, info, epsilon))
 	{
-		glm::vec3 hitPoint = ray.origin + ray.direction * info.t;
-		glm::vec3 hitNormal = info.normal;
+		return glm::vec3(0);
+	}
 
-		// Diffuse Material
+	std::shared_ptr<Shape> shape = info.shape.lock();
+	if (shape == nullptr)
+	{
+		return glm::vec3(0);
+	}
 
-		// GLobal Indirect Lighting
-		glm::vec3 indirectColor(0, 0, 0);
-		glm::vec3 Nt, Nb;
+	if(shape->emit != glm::vec3(0))
+	{
+		return shape->emit;
+	}
 
-		BuildLocalCoordinate(hitNormal, Nt, Nb);
-		float pdf = PathTracing::UniformHemispherePDF;
-		for (int i = 1; i <= numIndirectSample; i++)
+	const glm::vec3& hitWorldPoint = ray.origin + ray.direction * info.t;
+	const glm::vec3& hitWorldNormal = info.normal;
+	const glm::vec3& albedoColor = shape->color;
+	const glm::vec3& brdf = albedoColor * glm::one_over_pi<float>();
+
+	glm::vec3 directRadiance(0);
+	for(auto& light : lights)
+	{
+		float lightPdf, distance;
+		glm::vec3 lightDir;
+		glm::vec3 lightRadiance = light->Sample(hitWorldPoint, lightDir, lightPdf, distance);
+		
+		IntersectInfo lightInfo;
+		Ray lightRay(hitWorldPoint, lightDir, 0, distance);
+
+		if (const std::shared_ptr<AreaLight> areaLight = std::dynamic_pointer_cast<AreaLight>(light))
 		{
-			float r1 = PathTracing::RandomFloat(); // theta
-			float r2 = PathTracing::RandomFloat(); // phi
-			glm::vec3 sample = PathTracing::UniformSampleHemisphere(r1, r2);
-			glm::vec3 sampleWorld = LocalToWorld(sample, hitNormal, Nt, Nb);
-
-			glm::vec3 sampleNormal = glm::normalize(sampleWorld);
-			Ray indirectRay(hitPoint + sampleNormal * epsilon, sampleNormal, ray, 0);
-			glm::vec3 newIndirectColor = r2 * CastRay(indirectRay, maxDepth, numIndirectSample, epsilon) / pdf; // theta 곱하기랑 pdf 나누기를 꼭 해야한다
-
-			indirectColor = (indirectColor * (float)(i - 1) + newIndirectColor) / (float)i;
-
-			float maxColor = glm::max(glm::max(indirectColor.r, indirectColor.g), indirectColor.b);
-			if (PathTracing::RandomFloat() > maxColor)
-				break;
-
-			indirectColor *= 1 / maxColor;
+			if (TraceRay(lightRay, lightInfo, epsilon) && lightInfo.shape.lock() != areaLight->GetShape())
+			{
+				continue;
+			}
+		}
+		else
+		{
+			if (TraceRay(lightRay, lightInfo, epsilon))
+			{
+				continue;
+			}
 		}
 
-		// Object Material Albedo
-		resultColor = (info.shape->emit * glm::one_over_pi<float>() + 2.0f * indirectColor) * info.shape->color;
+		directRadiance += brdf * lightRadiance * glm::max(0.0f, glm::dot(hitWorldNormal, lightDir)) / lightPdf;
 	}
-	else
-	{
-		resultColor = glm::vec3(1, 1, 1);
-	}
+	
+	const float pdf = PathTracing::UniformHemispherePDF; // 새로운 Ray의 확률
 
-	return resultColor;
+	const auto[normal, tangent, biTangent] = Math::WorldToTangent(hitWorldNormal);
+	const auto[cosTheta, r2] = PathTracing::RandomFloat2();
+	glm::vec3 sampleTangent = PathTracing::UniformSampleHemisphere(cosTheta, r2);
+	glm::vec3 sampleWorld = Math::TangentToWorld(sampleTangent, normal, tangent, biTangent);
+	glm::vec3 sampleNormal = glm::normalize(sampleWorld);
+
+	Ray indirectRay(hitWorldPoint, sampleNormal, ray, 0);
+	glm::vec3 indirectRadiance = brdf * CastRay(indirectRay, maxDepth, epsilon) * cosTheta / pdf;
+	
+	return directRadiance + indirectRadiance;
 }
 
 bool CPURenderer::TraceRay(const Ray& ray, IntersectInfo& info, float epsilon)
 {
 	info.t = PathTracing::INFINITE<float>;
+	float tHit = 0;
+	glm::vec3 normal(0);
 	for (auto& shape : shapes)
 	{
-		float tHit = 0;
-		glm::vec3 normal;
 		if (shape->Intersect(ray, tHit, normal, epsilon) && tHit < info.t)
 		{
 			info.t = tHit;
@@ -409,29 +438,18 @@ bool CPURenderer::TraceRay(const Ray& ray, IntersectInfo& info, float epsilon)
 		}
 	}
 
-	return info.shape != nullptr;
-}
-
-void CPURenderer::BuildLocalCoordinate(const glm::vec3& N, glm::vec3& Nt, glm::vec3& Nb)
-{
-	if (glm::abs(N.x) > 0.1f)
+	for(auto& light : lights)
 	{
-		Nt = glm::normalize(glm::cross(glm::vec3(0, 1, 0), N));
+		if(const std::shared_ptr<AreaLight> areaLight = std::dynamic_pointer_cast<AreaLight>(light))
+		{
+			if (areaLight->Intersect(ray, tHit, normal, epsilon) && tHit < info.t)
+			{
+				info.t = tHit;
+				info.shape = areaLight->GetShape();
+				info.normal = normal;
+			}
+		}	
 	}
-	else
-	{
-		Nt = glm::normalize(glm::cross(glm::vec3(1, 0, 0), N));
-	}
 
-	Nb = glm::cross(N, Nt);
-}
-
-glm::vec3 CPURenderer::LocalToWorld(const glm::vec3& v, const glm::vec3& N, const glm::vec3& Nt, const glm::vec3& Nb)
-{
-	return glm::vec3
-	{
-		v.x * Nt.x + v.y * Nb.x + v.z * N.x,
-		v.x * Nt.y + v.y * Nb.y + v.z * N.y,
-		v.x * Nt.z + v.y * Nb.z + v.z * N.z
-	};
+	return info.shape.lock() != nullptr;
 }

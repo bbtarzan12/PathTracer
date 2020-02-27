@@ -84,6 +84,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
       <OpenMPSupport>true</OpenMPSupport>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -111,6 +112,7 @@
       <ConformanceMode>false</ConformanceMode>
       <OpenMPSupport>true</OpenMPSupport>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -135,6 +137,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AreaLight.cpp" />
+    <ClCompile Include="Math.cpp" />
+    <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="CPURenderer.cpp" />
     <ClCompile Include="GLFWManager.cpp" />
@@ -151,12 +156,16 @@
     <ClCompile Include="Sphere.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AreaLight.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="CPURenderer.h" />
     <ClInclude Include="GLFWManager.h" />
     <ClInclude Include="IntersectInfo.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="Math.h" />
     <ClInclude Include="PinHoleCamera.h" />
+    <ClInclude Include="PointLight.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />

@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <tuple>
 
 class Ray;
 struct IntersectInfo;
@@ -11,7 +12,9 @@ public:
 	virtual ~Shape() = default;
 
 	virtual bool Intersect(const Ray& ray, float& tHit, glm::vec3& normal, float rayEpsilon) const = 0;
-
+	virtual float GetArea() const = 0;
+	virtual std::tuple<glm::vec3, glm::vec3> GetRandomPointOnSurface() const = 0;
+	
 	virtual void InitOpenGL() = 0;
 	virtual void DrawOpenGL() = 0;
 	virtual void ClearOpenGL() = 0;

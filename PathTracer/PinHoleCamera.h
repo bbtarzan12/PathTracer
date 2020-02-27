@@ -22,6 +22,6 @@ public:
 	glm::vec2 clippingPlanes;
 	glm::uvec2 size;
 
-	float theta, phi;
+	float pitch, yaw;
 	float moveSpeed, mouseSpeed;
 };

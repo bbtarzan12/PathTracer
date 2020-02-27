@@ -1,5 +1,7 @@
 #include "Random.h"
 
+#include <ctime>
+
 uint32_t randomSeed = 1;
 
 uint32_t PathTracing::_random()
@@ -17,10 +19,15 @@ float PathTracing::RandomFloat()
 	return (float)_random() / 0xffffffff;
 }
 
+std::tuple<float, float> PathTracing::RandomFloat2()
+{
+	return std::make_tuple(RandomFloat(), RandomFloat());
+}
+
 glm::vec2 PathTracing::ConcentricSampleDisk(const glm::vec2& point)
 {
 	// [-1, 1]·Î »ç»ó
-	glm::vec2 offset = 2.0f * point - glm::vec2(1.0f, 1.0f);
+	const glm::vec2 offset = 2.0f * point - glm::vec2(1.0f, 1.0f);
 
 	if (offset.x == 0 && offset.y == 0)
 		return glm::vec2(0, 0);
@@ -45,6 +52,17 @@ glm::vec2 PathTracing::ConcentricSampleDisk(const glm::vec2& point)
 glm::vec3 PathTracing::UniformSampleHemisphere(const float r1, const float r2)
 {
 	float z = r1;
+	float r = glm::sqrt(glm::max(0.0f, 1.0f - z * z));
+	float phi = glm::two_pi<float>() * r2;
+	float x = r * glm::cos(phi);
+	float y = r * glm::sin(phi);
+
+	return glm::vec3(x, y, z);
+}
+
+glm::vec3 PathTracing::UniformSampleSphere(const float r1, const float r2)
+{
+	float z = 2 * r1 - 1;
 	float r = glm::sqrt(glm::max(0.0f, 1.0f - z * z));
 	float phi = glm::two_pi<float>() * r2;
 	float x = r * glm::cos(phi);
