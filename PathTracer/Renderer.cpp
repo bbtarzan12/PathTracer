@@ -2,7 +2,7 @@
 #include "Camera.h"
 
 
-Renderer::Renderer(RendererOption rendererOption)
+Renderer::Renderer(const RendererOption& rendererOption)
 	:rendererOption(rendererOption)
 {
 

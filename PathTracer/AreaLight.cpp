@@ -1,11 +1,17 @@
 ﻿#include "AreaLight.h"
 #include <utility>
 
+#include "LightVisitor.h"
 #include "Shape.h"
 
 AreaLight::AreaLight(std::shared_ptr<Shape> shape)
 	: shape(std::move(shape))
 {
+}
+
+void AreaLight::Accept(LightVisitor& visitor)
+{
+	visitor.Visit(*this);
 }
 
 glm::vec3 AreaLight::Sample(const glm::vec3& point, glm::vec3& lightDir, float& pdf, float& distance) const

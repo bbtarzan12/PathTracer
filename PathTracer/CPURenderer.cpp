@@ -2,8 +2,6 @@
 #include <iostream>
 #include <FreeImage/FreeImage.h>
 #include <glm/common.hpp>
-#include <glm/common.hpp>
-
 
 #include "AreaLight.h"
 #include "GLFWManager.h"
@@ -15,11 +13,13 @@
 #include "IntersectInfo.h"
 #include "Random.h"
 #include "Common.h"
+#include "LightVisibilityTester.h"
 #include "Math.h"
 #include "Sphere.h"
 #include "PointLight.h"
+#include "Tracing.h"
 
-CPURenderer::CPURenderer(RendererOption rendererOption)
+CPURenderer::CPURenderer(const RendererOption& rendererOption)
 	: Renderer(rendererOption), renderOpenGL(true)
 {
 	FreeImage_Initialise();
@@ -360,7 +360,7 @@ glm::vec3 CPURenderer::CastRay(const Ray& ray, int maxDepth, float epsilon)
 
 	IntersectInfo info;
 
-	if (!TraceRay(ray, info, epsilon))
+	if (!PathTracing::TraceRay(ray, info, epsilon, shapes, lights))
 	{
 		return glm::vec3(0);
 	}
@@ -390,20 +390,13 @@ glm::vec3 CPURenderer::CastRay(const Ray& ray, int maxDepth, float epsilon)
 		
 		IntersectInfo lightInfo;
 		Ray lightRay(hitWorldPoint, lightDir, 0, distance);
+		
+		LightVisibilityTester visibilityTester(lightRay, lightInfo, epsilon, shapes, lights);
+		light->Accept(visibilityTester);
 
-		if (const std::shared_ptr<AreaLight> areaLight = std::dynamic_pointer_cast<AreaLight>(light))
+		if(!visibilityTester())
 		{
-			if (TraceRay(lightRay, lightInfo, epsilon) && lightInfo.shape.lock() != areaLight->GetShape())
-			{
-				continue;
-			}
-		}
-		else
-		{
-			if (TraceRay(lightRay, lightInfo, epsilon))
-			{
-				continue;
-			}
+			continue;
 		}
 
 		directRadiance += brdf * lightRadiance * glm::max(0.0f, glm::dot(hitWorldNormal, lightDir)) / lightPdf;
@@ -421,35 +414,4 @@ glm::vec3 CPURenderer::CastRay(const Ray& ray, int maxDepth, float epsilon)
 	glm::vec3 indirectRadiance = brdf * CastRay(indirectRay, maxDepth, epsilon) * cosTheta / pdf;
 	
 	return directRadiance + indirectRadiance;
-}
-
-bool CPURenderer::TraceRay(const Ray& ray, IntersectInfo& info, float epsilon)
-{
-	info.t = PathTracing::INFINITE<float>;
-	float tHit = 0;
-	glm::vec3 normal(0);
-	for (auto& shape : shapes)
-	{
-		if (shape->Intersect(ray, tHit, normal, epsilon) && tHit < info.t)
-		{
-			info.t = tHit;
-			info.shape = shape;
-			info.normal = normal;
-		}
-	}
-
-	for(auto& light : lights)
-	{
-		if(const std::shared_ptr<AreaLight> areaLight = std::dynamic_pointer_cast<AreaLight>(light))
-		{
-			if (areaLight->Intersect(ray, tHit, normal, epsilon) && tHit < info.t)
-			{
-				info.t = tHit;
-				info.shape = areaLight->GetShape();
-				info.normal = normal;
-			}
-		}	
-	}
-
-	return info.shape.lock() != nullptr;
 }

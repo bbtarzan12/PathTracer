@@ -55,6 +55,18 @@
     <Filter Include="헤더 파일\Lights">
       <UniqueIdentifier>{eb6e267c-d142-4886-bf44-2160299de598}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Materials">
+      <UniqueIdentifier>{d3c078e3-0d2c-4a5e-9d21-7bb8eb64d593}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Materials">
+      <UniqueIdentifier>{3738cd4a-171e-43b0-95bb-916362c404f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Lights\Visitor">
+      <UniqueIdentifier>{b5fe5d52-c5cd-4d8b-9c03-b773fea6e4a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Lights\Visitor">
+      <UniqueIdentifier>{53f17dcc-5b65-4efe-8349-bc19f72d2797}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -102,10 +114,22 @@
     <ClCompile Include="Math.cpp">
       <Filter>소스 파일\Util</Filter>
     </ClCompile>
-    <ClCompile Include="PointLight.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="AreaLight.cpp">
+      <Filter>소스 파일\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>소스 파일\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>소스 파일\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="LightVisibilityTester.cpp">
+      <Filter>소스 파일\Lights\Visitor</Filter>
+    </ClCompile>
+    <ClCompile Include="Tracing.cpp">
+      <Filter>소스 파일\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="LightIntersectTester.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -157,6 +181,21 @@
     </ClInclude>
     <ClInclude Include="AreaLight.h">
       <Filter>헤더 파일\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>헤더 파일\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="LightVisitor.h">
+      <Filter>헤더 파일\Lights\Visitor</Filter>
+    </ClInclude>
+    <ClInclude Include="LightVisibilityTester.h">
+      <Filter>헤더 파일\Lights\Visitor</Filter>
+    </ClInclude>
+    <ClInclude Include="Tracing.h">
+      <Filter>헤더 파일\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="LightIntersectTester.h">
+      <Filter>헤더 파일\Lights\Visitor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

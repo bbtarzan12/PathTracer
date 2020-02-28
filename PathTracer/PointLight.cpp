@@ -1,8 +1,15 @@
 ﻿#include "PointLight.h"
 
+#include "LightVisitor.h"
+
 PointLight::PointLight(const glm::vec3& position, const glm::vec3& color, const float& intensity)
 	: position(position), color(color), intensity(intensity)
 {
+}
+
+void PointLight::Accept(LightVisitor& visitor)
+{
+	visitor.Visit(*this);
 }
 
 glm::vec3 PointLight::Sample(const glm::vec3& point, glm::vec3& lightDir, float& pdf, float& distance) const

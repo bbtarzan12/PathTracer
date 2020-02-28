@@ -138,6 +138,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AreaLight.cpp" />
+    <ClCompile Include="LightIntersectTester.cpp" />
+    <ClCompile Include="LightVisibilityTester.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Random.cpp" />
@@ -154,6 +157,7 @@
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="Tracing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AreaLight.h" />
@@ -163,6 +167,10 @@
     <ClInclude Include="GLFWManager.h" />
     <ClInclude Include="IntersectInfo.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="LightIntersectTester.h" />
+    <ClInclude Include="LightVisibilityTester.h" />
+    <ClInclude Include="LightVisitor.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="PinHoleCamera.h" />
     <ClInclude Include="PointLight.h" />
@@ -172,6 +180,7 @@
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Tracing.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="frag.glsl" />

@@ -11,7 +11,7 @@ struct RendererOption
 class Renderer
 {
 public:
-	Renderer(RendererOption rendererOption);
+	Renderer(const RendererOption& rendererOption);
 	virtual ~Renderer() = default;
 	virtual void Init() = 0;
 	virtual void SetCamera(const std::shared_ptr<Camera>& camera);

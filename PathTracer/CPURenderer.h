@@ -13,7 +13,7 @@ class Light;
 class CPURenderer : public Renderer
 {
 public:
-	CPURenderer(RendererOption rendererOption);
+	CPURenderer(const RendererOption& rendererOption);
 	virtual ~CPURenderer() override;
 
 	void Init() override;
@@ -30,10 +30,7 @@ private:
 	void Update(double deltaTime);
 
 	// -------------------------------------------------------- RayTracing
-
 	glm::vec3 CastRay(const Ray& ray, int maxDepth, float epsilon = 0.005f);
-
-	bool TraceRay(const Ray& ray, IntersectInfo& info, float epsilon);
 	// --------------------------------------------------------
 
 private:
