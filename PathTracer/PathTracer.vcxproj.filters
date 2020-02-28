@@ -67,6 +67,12 @@
     <Filter Include="소스 파일\Lights\Visitor">
       <UniqueIdentifier>{53f17dcc-5b65-4efe-8349-bc19f72d2797}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Materials\Bxdf">
+      <UniqueIdentifier>{9439976d-bd65-460a-9e13-44d851978499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Materials\Bxdf">
+      <UniqueIdentifier>{2db42f1b-5d8a-4048-9c76-89263a694d37}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -130,7 +136,16 @@
       <Filter>소스 파일\Util</Filter>
     </ClCompile>
     <ClCompile Include="LightIntersectTester.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Lights\Visitor</Filter>
+    </ClCompile>
+    <ClCompile Include="MatteMaterial.cpp">
+      <Filter>소스 파일\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="Bxdf.cpp">
+      <Filter>소스 파일\Materials\Bxdf</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape.cpp">
+      <Filter>소스 파일\Shapes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +211,12 @@
     </ClInclude>
     <ClInclude Include="LightIntersectTester.h">
       <Filter>헤더 파일\Lights\Visitor</Filter>
+    </ClInclude>
+    <ClInclude Include="MatteMaterial.h">
+      <Filter>헤더 파일\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="Bxdf.h">
+      <Filter>헤더 파일\Materials\Bxdf</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

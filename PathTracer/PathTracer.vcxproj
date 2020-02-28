@@ -138,10 +138,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AreaLight.cpp" />
+    <ClCompile Include="Bxdf.cpp" />
     <ClCompile Include="LightIntersectTester.cpp" />
     <ClCompile Include="LightVisibilityTester.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Math.cpp" />
+    <ClCompile Include="MatteMaterial.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="CPURenderer.cpp" />
@@ -156,11 +158,13 @@
     <ClCompile Include="PinHoleCamera.cpp" />
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Shape.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Tracing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AreaLight.h" />
+    <ClInclude Include="Bxdf.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="CPURenderer.h" />
@@ -172,6 +176,7 @@
     <ClInclude Include="LightVisitor.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="MatteMaterial.h" />
     <ClInclude Include="PinHoleCamera.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Random.h" />

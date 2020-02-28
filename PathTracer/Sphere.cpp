@@ -3,6 +3,10 @@
 #include <utility>
 #include <vector>
 #include <GL/glew.h>
+#include <glm/common.hpp>
+#include <glm/common.hpp>
+#include <glm/common.hpp>
+#include <glm/common.hpp>
 #include <iostream>
 
 #include "Ray.h"
@@ -55,6 +59,18 @@ bool Sphere::Intersect(const Ray& ray, float& tHit, glm::vec3& normal, float ray
 float Sphere::GetArea() const
 {
 	return glm::two_pi<float>() * glm::two_pi<float>() * radius * radius;
+}
+
+float Sphere::GetPDF(const glm::vec3& point, const glm::vec3& lightDir) const
+{
+	// Todo : point가 구 안에 있을 때 처리해야 함
+
+	const float distance = glm::distance(point, center);
+
+	const float sinTheta2 = radius * radius / (distance * distance);
+	const float cosThetaMax = glm::sqrt(glm::max(0.0f, 1.0f - sinTheta2));
+
+	return UniformConePDF(cosThetaMax);
 }
 
 std::tuple<glm::vec3, glm::vec3> Sphere::GetRandomPointOnSurface() const

@@ -7,7 +7,7 @@ class Ray;
 class Camera
 {
 public:
-	Camera() : position(0, 0, 0), proj(1.0f), view(1.0f) {};
+	Camera() : position(0, 0, 0), proj(1.0f), view(1.0f), dirty(false) {};
 	virtual ~Camera() = default;
 	virtual Ray GenerateRay(int x, int y) const = 0;
 	virtual void UpdateScreen(int width, int height) = 0;

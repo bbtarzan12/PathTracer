@@ -3,6 +3,10 @@
 #include "Shape.h"
 #include <glm/glm.hpp>
 #include <GL/glew.h>
+#include <glm/common.hpp>
+#include <glm/common.hpp>
+#include <glm/common.hpp>
+#include <glm/common.hpp>
 
 class Sphere : public Shape
 {
@@ -11,6 +15,7 @@ public:
 
 	virtual bool Intersect(const Ray& ray, float& tHit, glm::vec3& normal, float rayEpsilon) const override;
 	virtual float GetArea() const override;
+	virtual float GetPDF(const glm::vec3& point, const glm::vec3& lightDir) const override;
 	virtual std::tuple<glm::vec3, glm::vec3> GetRandomPointOnSurface() const override;
 	
 	virtual void InitOpenGL() override;

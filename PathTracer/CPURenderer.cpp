@@ -50,7 +50,9 @@ void CPURenderer::Init()
 
 	{
 		// RayTracing
-		frameBuffer = new float[rendererOption.width * rendererOption.height * 3];
+		const int bufferSize = rendererOption.width * rendererOption.height * 3;
+		frameBuffer = new float[bufferSize];
+		std::fill(frameBuffer, frameBuffer + bufferSize, 0.0f);
 
 		glEnable(GL_TEXTURE_2D);
 		glGenTextures(1, &rayTextureID);
@@ -116,7 +118,7 @@ void CPURenderer::Init()
 		//shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(0, 5, 0), 8, glm::vec3(1.0f), glm::vec3(5))));
 		
 		//lights.push_back(std::make_shared<PointLight>(PointLight(glm::vec3(0, 10, 0), glm::vec3(1), 25)));
-		std::shared_ptr<Sphere> sphereLightShape = std::make_shared<Sphere>(Sphere(glm::vec3(0, 10, 0), 4, glm::vec3(1.0f), glm::vec3(1.0f)));
+		std::shared_ptr<Sphere> sphereLightShape = std::make_shared<Sphere>(Sphere(glm::vec3(0, 10, 0), 4, glm::vec3(1.0f), glm::vec3(3.0f)));
 		lights.push_back(std::make_shared<AreaLight>(AreaLight(sphereLightShape)));
 	}
 }
@@ -296,9 +298,9 @@ void CPURenderer::Render(double deltaTime)
 			previousColor.g = glm::pow(previousColor.g, PathTracing::GAMMA_DECODING);
 			previousColor.b = glm::pow(previousColor.b, PathTracing::GAMMA_DECODING);
 
-			glm::vec3 color = CastRay(ray, 3);
+			glm::vec3 color = CastRay(ray, 5);
 
-			const glm::vec3 resultColor = (previousColor * (float)(frame - 1) + color) / (float)frame;
+			const glm::vec3 resultColor = (previousColor * static_cast<float>(frame - 1) + color) / static_cast<float>(frame);
 			frameBuffer[i * 3] = glm::pow(resultColor.r, PathTracing::GAMMA_COMPRESSION);
 			frameBuffer[i * 3 + 1] = glm::pow(resultColor.g, PathTracing::GAMMA_COMPRESSION);
 			frameBuffer[i * 3 + 2] = glm::pow(resultColor.b, PathTracing::GAMMA_COMPRESSION);
@@ -353,65 +355,72 @@ void CPURenderer::Update(double deltaTime)
 	}
 }
 
-glm::vec3 CPURenderer::CastRay(const Ray& ray, int maxDepth, float epsilon)
+glm::vec3 CPURenderer::CastRay(Ray& ray, int maxDepth, float epsilon)
 {
-	if (ray.depth > maxDepth)
-		return glm::vec3(0);
-
-	IntersectInfo info;
-
-	if (!PathTracing::TraceRay(ray, info, epsilon, shapes, lights))
+	glm::vec3 L(0); // Lo
+	glm::vec3 pathWeight(1.0f); // BSDF * Cos / PDF;
+	for(int depth = 1; depth <= maxDepth; depth++)
 	{
-		return glm::vec3(0);
-	}
-
-	std::shared_ptr<Shape> shape = info.shape.lock();
-	if (shape == nullptr)
-	{
-		return glm::vec3(0);
-	}
-
-	if(shape->emit != glm::vec3(0))
-	{
-		return shape->emit;
-	}
-
-	const glm::vec3& hitWorldPoint = ray.origin + ray.direction * info.t;
-	const glm::vec3& hitWorldNormal = info.normal;
-	const glm::vec3& albedoColor = shape->color;
-	const glm::vec3& brdf = albedoColor * glm::one_over_pi<float>();
-
-	glm::vec3 directRadiance(0);
-	for(auto& light : lights)
-	{
-		float lightPdf, distance;
-		glm::vec3 lightDir;
-		glm::vec3 lightRadiance = light->Sample(hitWorldPoint, lightDir, lightPdf, distance);
+		IntersectInfo info{};
+		if (!PathTracing::TraceRay(ray, info, epsilon, shapes, lights))
+			break;
 		
-		IntersectInfo lightInfo;
-		Ray lightRay(hitWorldPoint, lightDir, 0, distance);
-		
-		LightVisibilityTester visibilityTester(lightRay, lightInfo, epsilon, shapes, lights);
-		light->Accept(visibilityTester);
+		const std::shared_ptr<Shape>& shape = info.shape.lock();
+		if (shape == nullptr)
+			break;
 
-		if(!visibilityTester())
+		if(depth == 1)
 		{
-			continue;
+			L += shape->emit;
 		}
 
-		directRadiance += brdf * lightRadiance * glm::max(0.0f, glm::dot(hitWorldNormal, lightDir)) / lightPdf;
+		const glm::vec3& hitWorldPoint = ray.origin + ray.direction * info.t;
+		const glm::vec3& hitWorldNormal = info.normal;
+		const glm::vec3& albedoColor = shape->color;
+		const glm::vec3& f = albedoColor * glm::one_over_pi<float>();
+
+		for (auto& light : lights)
+		{
+			float lightPdf, distance;
+			glm::vec3 lightDir;
+			glm::vec3 lightRadiance = light->Sample(hitWorldPoint, lightDir, lightPdf, distance);
+
+			IntersectInfo lightInfo;
+			Ray lightRay(hitWorldPoint, lightDir, 0, distance);
+
+			LightVisibilityTester visibilityTester(lightRay, lightInfo, epsilon, shapes, lights);
+			light->Accept(visibilityTester);
+
+			if (!visibilityTester())
+			{
+				continue;
+			}
+			
+			L += pathWeight * f * lightRadiance * glm::max(0.0f, glm::dot(hitWorldNormal, lightDir)) / lightPdf;
+		}
+
+		const float pdf = PathTracing::UniformHemispherePDF; // 새로운 Ray의 확률
+
+		const auto[normal, tangent, biTangent] = Math::WorldToTangent(hitWorldNormal);
+		const auto[cosTheta, r2] = PathTracing::RandomFloat2();
+		glm::vec3 sampleTangent = PathTracing::UniformSampleHemisphere(cosTheta, r2);
+		glm::vec3 sampleWorld = Math::TangentToWorld(sampleTangent, normal, tangent, biTangent);
+		glm::vec3 sampleNormal = glm::normalize(sampleWorld);
+
+		pathWeight = f * cosTheta / pdf;
+
+		if(depth > 3)
+		{
+			float p = glm::min(0.5f, glm::max(pathWeight.x, glm::max(pathWeight.y, pathWeight.z)));
+
+			if (p <= PathTracing::RandomFloat())
+				break;
+
+			pathWeight /= p;
+		}
+
+		ray = Ray(hitWorldPoint, sampleNormal, ray, 0);
 	}
-	
-	const float pdf = PathTracing::UniformHemispherePDF; // 새로운 Ray의 확률
 
-	const auto[normal, tangent, biTangent] = Math::WorldToTangent(hitWorldNormal);
-	const auto[cosTheta, r2] = PathTracing::RandomFloat2();
-	glm::vec3 sampleTangent = PathTracing::UniformSampleHemisphere(cosTheta, r2);
-	glm::vec3 sampleWorld = Math::TangentToWorld(sampleTangent, normal, tangent, biTangent);
-	glm::vec3 sampleNormal = glm::normalize(sampleWorld);
-
-	Ray indirectRay(hitWorldPoint, sampleNormal, ray, 0);
-	glm::vec3 indirectRadiance = brdf * CastRay(indirectRay, maxDepth, epsilon) * cosTheta / pdf;
-	
-	return directRadiance + indirectRadiance;
+	return L;
 }

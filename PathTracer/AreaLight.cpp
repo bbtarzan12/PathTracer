@@ -19,14 +19,10 @@ glm::vec3 AreaLight::Sample(const glm::vec3& point, glm::vec3& lightDir, float& 
 	const auto[randomPoint, randomNormal] = shape->GetRandomPointOnSurface();
 	
 	lightDir = glm::normalize(randomPoint - point);
-	pdf = 1.0f / shape->GetArea();
+	pdf = shape->GetPDF(point, lightDir);
 	distance = glm::distance(point, randomPoint);
-	
-	const float distanceSquared = distance * distance;
-	const float cosO = glm::max(0.0f, glm::dot(randomNormal, -lightDir));
-	const glm::vec3& emit = shape->emit;
 
-	return emit * cosO / distanceSquared;
+	return shape->color * shape->emit;
 }
 
 bool AreaLight::Intersect(const Ray& ray, float& tHit, glm::vec3& normal, float rayEpsilon) const

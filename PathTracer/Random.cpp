@@ -16,7 +16,7 @@ uint32_t PathTracing::_random()
 
 float PathTracing::RandomFloat()
 {
-	return (float)_random() / 0xffffffff;
+	return static_cast<float>(_random()) / 0xffffffff;
 }
 
 std::tuple<float, float> PathTracing::RandomFloat2()

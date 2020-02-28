@@ -30,7 +30,7 @@ private:
 	void Update(double deltaTime);
 
 	// -------------------------------------------------------- RayTracing
-	glm::vec3 CastRay(const Ray& ray, int maxDepth, float epsilon = 0.005f);
+	glm::vec3 CastRay(Ray& ray, int maxDepth, float epsilon = 0.005f);
 	// --------------------------------------------------------
 
 private:

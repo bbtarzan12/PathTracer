@@ -42,8 +42,8 @@ Ray PinHoleCamera::GenerateRay(int x, int y) const
 
 	glm::vec2 imagePlaneUV
 	{
-		left + (right - left) * ((x + 0.5f + jitter1) / (float)size.x),
-		bottom + (top - bottom) * ((y + 0.5f + jitter2) / (float)size.y)
+		left + (right - left) * ((static_cast<float>(x) + 0.5f + jitter1) / static_cast<float>(size.x)),
+		bottom + (top - bottom) * ((static_cast<float>(y) + 0.5f + jitter2) / static_cast<float>(size.y))
 	};
 
 	glm::vec3 direction = glm::normalize(imagePlaneUV.x * uDir + imagePlaneUV.y * vDir - wDir);
@@ -60,10 +60,9 @@ Ray PinHoleCamera::GenerateRay(int x, int y) const
 
 		return Ray(aperturePoint, glm::normalize(pointOnImagePlane - aperturePoint), clippingPlanes.x, clippingPlanes.y);
 	}
-	else
-	{
-		return Ray(position, direction, clippingPlanes.x, clippingPlanes.y);
-	}
+
+	
+	return Ray(position, direction, clippingPlanes.x, clippingPlanes.y);
 }
 
 void PinHoleCamera::UpdateScreen(int width, int height)
