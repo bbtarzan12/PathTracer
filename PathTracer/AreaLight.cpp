@@ -18,19 +18,17 @@ void AreaLight::Accept(LightVisitor& visitor)
 
 glm::vec3 AreaLight::Sample(const glm::vec3& point, const glm::vec3& worldWo, const IntersectInfo& info, const Material* material, float& distance, glm::vec3& worldWi) const
 {
-	const auto[randomPoint, randomNormal] = shape->GetRandomPointOnSurface();
+	const auto[randomPoint, randomNormal] = shape->Sample(point);
 	
 	worldWi = glm::normalize(randomPoint - point);
 	distance = glm::distance(point, randomPoint);
 	
 	const float pdf = shape->GetPDF(point, worldWi);
-	const float area = shape->GetArea();
-	const float distance2 = distance * distance;
 	const glm::vec3 f = material->CalculateF(info, worldWo, worldWi);
 	const glm::vec3 radiance = color * intensity;
 	const float cosTheta = glm::max(0.0f, glm::dot(info.normal, worldWi));
 
-	return f * radiance * cosTheta / pdf * (area / distance2);
+	return f * radiance * cosTheta / pdf ;
 }
 
 bool AreaLight::Intersect(const Ray& ray, float& tHit, glm::vec3& normal, float rayEpsilon) const

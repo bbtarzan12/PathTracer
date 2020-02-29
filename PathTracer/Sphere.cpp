@@ -10,6 +10,8 @@
 #include <glm/ext/scalar_constants.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp> 
+
+#include "Math.h"
 #include "Random.h"
 
 Sphere::Sphere(const glm::vec3& center, const float radius)
@@ -69,13 +71,40 @@ float Sphere::GetPDF(const glm::vec3& point, const glm::vec3& wi) const
 	return UniformConePDF(cosThetaMax);
 }
 
-std::tuple<glm::vec3, glm::vec3> Sphere::GetRandomPointOnSurface() const
+std::tuple<glm::vec3, glm::vec3> Sphere::Sample() const
 {
 	const auto[r1, r2] = PathTracing::RandomFloat2();
 	const glm::vec3 randomPoint = model * glm::vec4(PathTracing::UniformSampleSphere(r1, r2), 1.0f);
 	const glm::vec3 randomNormal = glm::normalize(model * glm::vec4(randomPoint - center, 0.0f));
 	
 	return std::make_tuple(randomPoint, randomNormal);
+}
+
+std::tuple<glm::vec3, glm::vec3> Sphere::Sample(const glm::vec3& point) const
+{
+	glm::vec3 wc = glm::normalize(point - center);
+	auto [wcX, wcY] = PathTracing::BuildTangentSpace(wc);
+
+	float distance = glm::distance(point, center);
+	float distance2 = distance * distance;
+	float radius2 = radius * radius;
+	if (distance2 - radius2 < 0.001f)
+		return Sample();
+
+	float sinTheta2 = radius2 / distance2;
+	float cosThetaMax = glm::sqrt(glm::max(0.0f, 1.0f - sinTheta2));
+	auto[r1, r2] = PathTracing::RandomFloat2();
+	glm::vec3 sampleDir = PathTracing::UniformSampleCone(r1, r2, cosThetaMax, wcX, wcY, wc);
+	Ray ray(point, sampleDir, 0.0f);
+	
+	float tHit;
+	glm::vec3 normal;
+	if (!Intersect(ray, tHit, normal, 0.001f))
+		tHit = glm::dot(center - point, glm::normalize(ray.direction));
+
+	const glm::vec3 hitPoint = ray.origin + ray.direction * tHit;
+
+	return std::make_tuple(hitPoint, normal);
 }
 
 void Sphere::InitOpenGL()

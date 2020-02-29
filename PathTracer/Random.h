@@ -20,6 +20,10 @@ namespace PathTracing
 
 	glm::vec3 UniformSampleSphere(const float r1, const float r2);
 
+	glm::vec3 UniformSampleCone(const float r1, const float r2, const float cosThetaMax);
+
+	glm::vec3 UniformSampleCone(const float r1, const float r2, const float cosThetaMax, const glm::vec3& x, const glm::vec3& y, const glm::vec3& z);
+
 	constexpr float UniformHemispherePDF = glm::one_over_two_pi<float>();
 
 }

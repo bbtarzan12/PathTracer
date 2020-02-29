@@ -369,13 +369,12 @@ glm::vec3 CPURenderer::CastRay(Ray& ray, int maxDepth, float epsilon)
 		const auto& shape = info.shape;
 		const auto& material = info.material;
 
-		if(depth == 1)
-			L += pathWeight * info.emit;
+		L += pathWeight * info.emit;
 		
 		if (shape == nullptr || material == nullptr)
 			break;
 
-		const glm::vec3& hitWorldPoint = ray.origin + ray.direction * info.t;
+		const glm::vec3& hitWorldPoint = (ray.origin + ray.direction * info.t) + (info.normal * epsilon);
 
 		const auto& worldWo = -ray.direction;
 

@@ -2,9 +2,34 @@
 
 #include <glm/gtc/constants.inl>
 
+#include "Ray.h"
+
 Shape::~Shape()
 {
 	ClearOpenGL();
+}
+
+float Shape::GetPdf() const
+{
+	return 1.0f / GetArea();
+}
+
+float Shape::GetPDF(const glm::vec3& point, const glm::vec3& wi) const
+{
+	const Ray ray(point, wi, 0.0f);
+
+	float tHit;
+	glm::vec3 normal;
+	if(!Intersect(ray, tHit, normal, 0.001f))
+	{
+		return 0.0f;
+	}
+
+	const glm::vec3 hitPoint = ray.origin + ray.direction * tHit;
+	const float distance = glm::distance(point, hitPoint);
+	const float cosTheta = glm::max(0.0f, glm::dot(normal, -wi));
+
+	return (distance * distance) / (cosTheta * GetArea());
 }
 
 float Shape::UniformConePDF(const float cosThetaMax) const

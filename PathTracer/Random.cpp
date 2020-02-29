@@ -70,3 +70,19 @@ glm::vec3 PathTracing::UniformSampleSphere(const float r1, const float r2)
 
 	return glm::vec3(x, y, z);
 }
+
+glm::vec3 PathTracing::UniformSampleCone(const float r1, const float r2, const float cosThetaMax)
+{
+	float cosTheta = (1.0f - r1) + r1 * cosThetaMax;
+	float sinTheta = std::sqrt(1.0f - cosTheta * cosTheta);
+	float phi = r2 * glm::two_pi<float>();
+	return glm::vec3(glm::cos(phi) * sinTheta, glm::sin(phi) * sinTheta, cosTheta);
+}
+
+glm::vec3 PathTracing::UniformSampleCone(const float r1, const float r2, const float cosThetaMax, const glm::vec3& x, const glm::vec3& y, const glm::vec3& z)
+{
+	float cosTheta = glm::mix(cosThetaMax, 1.f, r1);
+	float sinTheta = sqrtf(1.f - cosTheta * cosTheta);
+	float phi = r2 * glm::two_pi<float>();
+	return glm::cos(phi) * sinTheta * x + glm::sin(phi) * sinTheta * y + cosTheta * z;
+}
