@@ -299,7 +299,7 @@ void CPURenderer::Render(double deltaTime)
 			previousColor.g = glm::pow(previousColor.g, PathTracing::GAMMA_DECODING);
 			previousColor.b = glm::pow(previousColor.b, PathTracing::GAMMA_DECODING);
 
-			glm::vec3 color = CastRay(ray, 5);
+			glm::vec3 color = glm::clamp(CastRay(ray, 5), 0.0f, 1.0f);
 
 			const glm::vec3 resultColor = (previousColor * static_cast<float>(frame - 1) + color) / static_cast<float>(frame);
 			frameBuffer[i * 3] = glm::pow(resultColor.r, PathTracing::GAMMA_COMPRESSION);
