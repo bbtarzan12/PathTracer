@@ -11,10 +11,10 @@ int main()
 
 	std::unique_ptr<Renderer> renderer = std::make_unique<CPURenderer>(renderOption);
 
-	const std::shared_ptr<Camera> camera = std::make_shared<PinHoleCamera>(PinHoleCamera({ width, height }, 70.0f, 10.0f, 0.0f, { 0.01f, 1000000.0f }));
+	std::unique_ptr<Camera> camera = std::make_unique<PinHoleCamera>(PinHoleCamera({ width, height }, 70.0f, 10.0f, 0.0f, { 0.01f, 1000000.0f }));
 
 	renderer->Init();
-	renderer->SetCamera(camera);
+	renderer->SetCamera(std::move(camera));
 	renderer->Start();
 	renderer->Release();
 

@@ -109,24 +109,24 @@ void CPURenderer::Init()
 
 	{
 		// Todo : Code cleanup
-		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(0, 1040, 0), 1000)), std::make_shared<MatteMaterial>(glm::vec3(0.25f, 0.75f, 0.25f))));
-		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(0, -1000, 0), 1000)), std::make_shared<MatteMaterial>(glm::vec3(1.0f))));
-		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(1040, 0, 0), 1000)), std::make_shared<MatteMaterial>(glm::vec3(0.75f, 0.25f, 0.25f))));
-		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(-1040, 0, 0), 1000)), std::make_shared<MatteMaterial>(glm::vec3(0.75f, 0.25f, 0.25f))));
-		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(0, 0, 1040), 1000)), std::make_shared<MatteMaterial>(glm::vec3(0.25f, 0.25f, 0.75f))));
-		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(0, 0, -1040), 1000)), std::make_shared<MatteMaterial>(glm::vec3(1.0f))));
-		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(20, 0, 14), 8)), std::make_shared<MatteMaterial>(glm::vec3(1.0f, 0.15f, 0.15f))));
-		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(-14, 0, -20), 8)), std::make_shared<MatteMaterial>(glm::vec3(0.15f, 1.0f, 1.0f))));
-		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(14, 0, -20), 8)), std::make_shared<MatteMaterial>(glm::vec3(0.15f, 0.15f, 1.0f))));
-		lights.push_back(std::make_shared<AreaLight>(AreaLight(std::make_shared<Sphere>(Sphere(glm::vec3(0, 10, 0), 4)), glm::vec3(1.0f), 3.0f)));
+		//sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, 1040, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.25f, 0.75f, 0.25f))));
+		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, -1000, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(1.0f))));
+		//sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(1040, 0, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.75f, 0.25f, 0.25f))));
+		//sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(-1040, 0, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.75f, 0.25f, 0.25f))));
+		//sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, 0, 1040), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.25f, 0.25f, 0.75f))));
+		//sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, 0, -1040), 1000)), std::make_unique<MatteMaterial>(glm::vec3(1.0f))));
+		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(20, 0, 14), 8)), std::make_unique<MatteMaterial>(glm::vec3(1.0f, 0.15f, 0.15f))));
+		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(-14, 0, -20), 8)), std::make_unique<MatteMaterial>(glm::vec3(0.15f, 1.0f, 1.0f))));
+		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(14, 0, -20), 8)), std::make_unique<MatteMaterial>(glm::vec3(0.15f, 0.15f, 1.0f))));
+		lights.push_back(std::make_unique<AreaLight>(AreaLight(std::make_unique<Sphere>(Sphere(glm::vec3(0, 10, 0), 4)), glm::vec3(1.0f), 3.0f)));
 	}
 }
 
-void CPURenderer::SetCamera(const std::shared_ptr<Camera>& camera)
+void CPURenderer::SetCamera(std::unique_ptr<Camera> camera)
 {
-	Renderer::SetCamera(camera);
-	camera->UpdateScreen(rendererOption.width, rendererOption.height);
-	camera->UpdateCamera(0);
+	Renderer::SetCamera(std::move(camera));
+	this->camera->UpdateScreen(rendererOption.width, rendererOption.height);
+	this->camera->UpdateCamera(0);
 	std::cout << "[Renderer] Set Camera To Renderer" << std::endl;
 }
 
@@ -158,14 +158,6 @@ void CPURenderer::Start()
 void CPURenderer::Release()
 {
 	GLFWManager::Release();
-
-	for (auto& object : sceneObjects)
-	{
-		if(const auto& shape = object->GetShape().lock())
-		{
-			shape->ClearOpenGL();
-		}
-	}
 }
 
 void CPURenderer::HandleKeyboard(int key, int scancode, int action, int mods)
@@ -270,8 +262,8 @@ void CPURenderer::Render(double deltaTime)
 	{
 		for (auto& object : sceneObjects)
 		{
-			const auto& shape = object->GetShape().lock();
-			const auto& material = object->GetMaterial().lock();
+			const auto& shape = object->GetShape();
+			const auto& material = object->GetMaterial();
 			const glm::vec3& color = material->GetDefaultColorForDrawOpenGL();
 			
 			if(shape == nullptr || material == nullptr)
@@ -374,11 +366,11 @@ glm::vec3 CPURenderer::CastRay(Ray& ray, int maxDepth, float epsilon)
 		if (!PathTracing::TraceRay(ray, info, epsilon, sceneObjects, lights))
 			break;
 		
-		const auto& shape = info.shape.lock();
-		const auto& material = info.material.lock();
+		const auto& shape = info.shape;
+		const auto& material = info.material;
 
-		//if(depth == 1)
-		L += pathWeight * info.emit;
+		if(depth == 1)
+			L += pathWeight * info.emit;
 		
 		if (shape == nullptr || material == nullptr)
 			break;

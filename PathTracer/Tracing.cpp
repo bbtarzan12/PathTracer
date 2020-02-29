@@ -11,7 +11,7 @@
 #include <memory>
 
 
-bool PathTracing::TraceRay(const Ray& ray, IntersectInfo& info, const float epsilon, const std::vector<std::shared_ptr<SceneObject>>& objects, const std::vector<std::shared_ptr<Light>>& lights)
+bool PathTracing::TraceRay(const Ray& ray, IntersectInfo& info, const float epsilon, const std::vector<std::unique_ptr<SceneObject>>& objects, const std::vector<std::unique_ptr<Light>>& lights)
 {
 	info.t = PathTracing::INFINITE<float>;
 	info.emit = glm::vec3(0);
@@ -19,8 +19,8 @@ bool PathTracing::TraceRay(const Ray& ray, IntersectInfo& info, const float epsi
 	glm::vec3 normal(0);
 	for (auto& object : objects)
 	{
-		const auto& shape = object->GetShape().lock();
-		const auto& material = object->GetMaterial().lock();
+		const Shape* shape = object->GetShape();
+		const Material* material = object->GetMaterial();
 
 		if(shape == nullptr || material == nullptr)
 			continue;
@@ -38,7 +38,7 @@ bool PathTracing::TraceRay(const Ray& ray, IntersectInfo& info, const float epsi
 	{
 		LightIntersectTester lightIntersectTester(ray, epsilon);
 		light->Accept(lightIntersectTester);
-		std::shared_ptr<Shape> shape;
+		const Shape* shape;
 		glm::vec3 emit;
 		if (lightIntersectTester.GetIntersectInformation(tHit, normal, emit, shape) && tHit < info.t)
 		{
@@ -49,7 +49,7 @@ bool PathTracing::TraceRay(const Ray& ray, IntersectInfo& info, const float epsi
 		}
 	}
 
-	const bool bHit = info.shape.lock() != nullptr;
+	const bool bHit = info.shape != nullptr;
 
 	if (!bHit)
 	{

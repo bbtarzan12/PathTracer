@@ -161,7 +161,7 @@ void Sphere::InitOpenGL()
 	isInited = true;
 }
 
-void Sphere::DrawOpenGL()
+void Sphere::DrawOpenGL() const
 {
 	if (!isInited)
 	{
@@ -176,6 +176,7 @@ void Sphere::DrawOpenGL()
 
 void Sphere::ClearOpenGL()
 {
+	Shape::ClearOpenGL();
 	if (!isInited)
 	{
 		return;

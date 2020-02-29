@@ -8,7 +8,7 @@ Renderer::Renderer(const RendererOption& rendererOption)
 
 }
 
-void Renderer::SetCamera(const std::shared_ptr<Camera>& camera)
+void Renderer::SetCamera(std::unique_ptr<Camera> camera)
 {
-	this->camera = camera;
+	this->camera = std::move(camera);
 }

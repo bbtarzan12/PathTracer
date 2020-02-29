@@ -12,7 +12,7 @@ void PointLight::Accept(LightVisitor& visitor)
 	visitor.Visit(*this);
 }
 
-glm::vec3 PointLight::Sample(const glm::vec3& point, const glm::vec3& worldWo, const IntersectInfo& info, const std::shared_ptr<Material>& material, float& distance, glm::vec3& worldWi) const
+glm::vec3 PointLight::Sample(const glm::vec3& point, const glm::vec3& worldWo, const IntersectInfo& info, const Material* material, float& distance, glm::vec3& worldWi) const
 {
 	//lightDir = glm::normalize(position - point);
 	//pdf = 1;

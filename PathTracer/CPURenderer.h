@@ -18,7 +18,7 @@ public:
 	virtual ~CPURenderer() override;
 
 	void Init() override;
-	void SetCamera(const std::shared_ptr<Camera>& camera) override;
+	void SetCamera(std::unique_ptr<Camera> camera) override;
 	void Start() override;
 	void Release() override;
 	void HandleKeyboard(int key, int scancode, int action, int mods) override;
@@ -50,7 +50,7 @@ private:
 
 
 	// Scene
-	std::vector<std::shared_ptr<SceneObject>> sceneObjects;
-	std::vector<std::shared_ptr<Light>> lights;
+	std::vector<std::unique_ptr<SceneObject>> sceneObjects;
+	std::vector<std::unique_ptr<Light>> lights;
 
 };

@@ -5,7 +5,7 @@
 #include "Ray.h"
 
 LightIntersectTester::LightIntersectTester(const Ray& ray, const float& epsilon)
-	: bIntersect(false), tHit(0), normal(0), ray(ray), epsilon(epsilon)
+	: bIntersect(false), tHit(0), normal(0), emit(), shape(nullptr), ray(ray), epsilon(epsilon)
 {
 }
 
@@ -22,7 +22,7 @@ void LightIntersectTester::Visit(const AreaLight& light)
 	emit = light.Emit();
 }
 
-bool LightIntersectTester::GetIntersectInformation(float& t, glm::vec3& n, glm::vec3& e, std::shared_ptr<Shape>& s) const
+bool LightIntersectTester::GetIntersectInformation(float& t, glm::vec3& n, glm::vec3& e, const Shape*& s) const
 {
 	s = shape;
 	t = tHit;

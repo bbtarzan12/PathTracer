@@ -19,7 +19,7 @@ public:
 	virtual std::tuple<glm::vec3, glm::vec3> GetRandomPointOnSurface() const override;
 	
 	virtual void InitOpenGL() override;
-	virtual void DrawOpenGL() override;
+	virtual void DrawOpenGL() const override;
 	virtual void ClearOpenGL() override;
 
 

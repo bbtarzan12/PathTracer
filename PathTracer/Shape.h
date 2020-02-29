@@ -9,7 +9,7 @@ class Shape
 {
 public:
 	Shape() : model(1.0f) {}
-	virtual ~Shape() = default;
+	virtual ~Shape();
 
 	virtual bool Intersect(const Ray& ray, float& tHit, glm::vec3& normal, float rayEpsilon) const = 0;
 	virtual float GetArea() const = 0;
@@ -17,8 +17,8 @@ public:
 	virtual std::tuple<glm::vec3, glm::vec3> GetRandomPointOnSurface() const = 0;
 	
 	virtual void InitOpenGL() = 0;
-	virtual void DrawOpenGL() = 0;
-	virtual void ClearOpenGL() = 0;
+	virtual void DrawOpenGL() const = 0;
+	virtual void ClearOpenGL(){};
 
 	glm::mat4 model;
 

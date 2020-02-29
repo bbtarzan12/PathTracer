@@ -29,5 +29,5 @@ public:
 	virtual glm::vec3 GetDefaultColorForDrawOpenGL() const override;
 	
 private:
-	std::shared_ptr<LambertianBrdf> lambertian;
+	std::unique_ptr<LambertianBrdf> lambertian;
 };

@@ -4,7 +4,7 @@
 #include "Math.h"
 
 MatteMaterial::MatteMaterial(const glm::vec3& R)
-	:lambertian(std::make_shared<LambertianBrdf>(R))
+	:lambertian(std::make_unique<LambertianBrdf>(R))
 {
 }
 

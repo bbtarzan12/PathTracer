@@ -12,7 +12,7 @@ class Ray;
 class LightVisibilityTester : public LightVisitor
 {
 public:
-	LightVisibilityTester(const Ray& ray, IntersectInfo& info, const float& epsilon, const std::vector<std::shared_ptr<SceneObject>>& objects, const std::vector<std::shared_ptr<Light>>& lights);
+	LightVisibilityTester(const Ray& ray, IntersectInfo& info, const float& epsilon, const std::vector<std::unique_ptr<SceneObject>>& objects, const std::vector<std::unique_ptr<Light>>& lights);
 	
 	virtual void Visit(const PointLight& light) override;
 	virtual void Visit(const AreaLight& light) override;
@@ -24,6 +24,6 @@ private:
 	const Ray& ray;
 	IntersectInfo& info;
 	const float& epsilon;
-	const std::vector<std::shared_ptr<SceneObject>>& objects;
-	const std::vector<std::shared_ptr<Light>>& lights;
+	const std::vector<std::unique_ptr<SceneObject>>& objects;
+	const std::vector<std::unique_ptr<Light>>& lights;
 };

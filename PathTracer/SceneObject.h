@@ -1,20 +1,19 @@
 ﻿#pragma once
 #include <memory>
 
-
-class Shape;
-class Material;
+#include "Material.h"
+#include "Shape.h"
 
 class SceneObject
 {
 public:
-	SceneObject(std::shared_ptr<Shape> shape, std::shared_ptr<Material> material);
+	SceneObject(std::unique_ptr<Shape> shape, std::unique_ptr<Material> material);
 
-	std::weak_ptr<Shape> GetShape() const;
-	std::weak_ptr<Material> GetMaterial() const;
+	const Shape* GetShape() const;
+	const Material* GetMaterial() const;
 	
 private:
-	std::shared_ptr<Shape> shape;
-	std::shared_ptr<Material> material;
+	std::unique_ptr<Shape> shape;
+	std::unique_ptr<Material> material;
 	
 };

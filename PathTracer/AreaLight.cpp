@@ -6,7 +6,7 @@
 
 #include <utility>
 
-AreaLight::AreaLight(std::shared_ptr<Shape> shape, const glm::vec3& color, const float intensity)
+AreaLight::AreaLight(std::unique_ptr<Shape> shape, const glm::vec3& color, const float intensity)
 	: color(color), intensity(intensity), shape(std::move(shape))
 {
 }
@@ -16,7 +16,7 @@ void AreaLight::Accept(LightVisitor& visitor)
 	visitor.Visit(*this);
 }
 
-glm::vec3 AreaLight::Sample(const glm::vec3& point, const glm::vec3& worldWo, const IntersectInfo& info, const std::shared_ptr<Material>& material, float& distance, glm::vec3& worldWi) const
+glm::vec3 AreaLight::Sample(const glm::vec3& point, const glm::vec3& worldWo, const IntersectInfo& info, const Material* material, float& distance, glm::vec3& worldWi) const
 {
 	const auto[randomPoint, randomNormal] = shape->GetRandomPointOnSurface();
 	
@@ -43,7 +43,7 @@ glm::vec3 AreaLight::Emit() const
 	return color * intensity;
 }
 
-const std::shared_ptr<Shape>& AreaLight::GetShape() const
+const Shape* AreaLight::GetShape() const
 {
-	return shape;
+	return shape.get();
 }
