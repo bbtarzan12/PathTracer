@@ -3,10 +3,6 @@
 #include <utility>
 #include <vector>
 #include <GL/glew.h>
-#include <glm/common.hpp>
-#include <glm/common.hpp>
-#include <glm/common.hpp>
-#include <glm/common.hpp>
 #include <iostream>
 
 #include "Ray.h"
@@ -16,8 +12,8 @@
 #include <glm/gtc/matrix_transform.hpp> 
 #include "Random.h"
 
-Sphere::Sphere(const glm::vec3& center, float radius, const glm::vec3& color, const glm::vec3& emit)
-	: Shape(color, emit), center(center), radius(radius), isInited(false), VAO(0), VBO(0), EBO(0)
+Sphere::Sphere(const glm::vec3& center, const float radius)
+	: Shape(), center(center), radius(radius), isInited(false), VAO(0), VBO(0), EBO(0)
 {
 	model = glm::translate(center) * glm::scale(glm::vec3(radius, radius, radius));
 	InitOpenGL();
@@ -61,7 +57,7 @@ float Sphere::GetArea() const
 	return glm::two_pi<float>() * glm::two_pi<float>() * radius * radius;
 }
 
-float Sphere::GetPDF(const glm::vec3& point, const glm::vec3& lightDir) const
+float Sphere::GetPDF(const glm::vec3& point, const glm::vec3& wi) const
 {
 	// Todo : point가 구 안에 있을 때 처리해야 함
 

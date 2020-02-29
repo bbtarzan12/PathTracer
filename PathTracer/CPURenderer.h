@@ -4,11 +4,12 @@
 #include <vector>
 #include <GL/glew.h>
 #include "Ray.h"
+#include "SceneObject.h"
 
 struct IntersectInfo;
 
-class Shape;
 class Light;
+class SceneObject;
 
 class CPURenderer : public Renderer
 {
@@ -49,7 +50,7 @@ private:
 
 
 	// Scene
-	std::vector<std::shared_ptr<Shape>> shapes;
+	std::vector<std::shared_ptr<SceneObject>> sceneObjects;
 	std::vector<std::shared_ptr<Light>> lights;
 
 };

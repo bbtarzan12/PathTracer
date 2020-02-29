@@ -1,11 +1,13 @@
 ﻿#include "AreaLight.h"
-#include <utility>
-
 #include "LightVisitor.h"
 #include "Shape.h"
+#include "Material.h"
+#include "IntersectInfo.h"
 
-AreaLight::AreaLight(std::shared_ptr<Shape> shape)
-	: shape(std::move(shape))
+#include <utility>
+
+AreaLight::AreaLight(std::shared_ptr<Shape> shape, const glm::vec3& color, const float intensity)
+	: color(color), intensity(intensity), shape(std::move(shape))
 {
 }
 
@@ -14,20 +16,31 @@ void AreaLight::Accept(LightVisitor& visitor)
 	visitor.Visit(*this);
 }
 
-glm::vec3 AreaLight::Sample(const glm::vec3& point, glm::vec3& lightDir, float& pdf, float& distance) const
+glm::vec3 AreaLight::Sample(const glm::vec3& point, const glm::vec3& worldWo, const IntersectInfo& info, const std::shared_ptr<Material>& material, float& distance, glm::vec3& worldWi) const
 {
 	const auto[randomPoint, randomNormal] = shape->GetRandomPointOnSurface();
 	
-	lightDir = glm::normalize(randomPoint - point);
-	pdf = shape->GetPDF(point, lightDir);
+	worldWi = glm::normalize(randomPoint - point);
 	distance = glm::distance(point, randomPoint);
+	
+	const float pdf = shape->GetPDF(point, worldWi);
+	const float area = shape->GetArea();
+	const float distance2 = distance * distance;
+	const glm::vec3 f = material->CalculateF(info, worldWo, worldWi);
+	const glm::vec3 radiance = color * intensity;
+	const float cosTheta = glm::max(0.0f, glm::dot(info.normal, worldWi));
 
-	return shape->color * shape->emit;
+	return f * radiance * cosTheta / pdf * (area / distance2);
 }
 
 bool AreaLight::Intersect(const Ray& ray, float& tHit, glm::vec3& normal, float rayEpsilon) const
 {
 	return shape->Intersect(ray, tHit, normal, rayEpsilon);
+}
+
+glm::vec3 AreaLight::Emit() const
+{
+	return color * intensity;
 }
 
 const std::shared_ptr<Shape>& AreaLight::GetShape() const

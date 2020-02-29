@@ -12,15 +12,19 @@ void PointLight::Accept(LightVisitor& visitor)
 	visitor.Visit(*this);
 }
 
-glm::vec3 PointLight::Sample(const glm::vec3& point, glm::vec3& lightDir, float& pdf, float& distance) const
+glm::vec3 PointLight::Sample(const glm::vec3& point, const glm::vec3& worldWo, const IntersectInfo& info, const std::shared_ptr<Material>& material, float& distance, glm::vec3& worldWi) const
 {
-	lightDir = glm::normalize(position - point);
-	pdf = 1;
-	distance = glm::distance(point, position);
+	//lightDir = glm::normalize(position - point);
+	//pdf = 1;
+	//distance = glm::distance(point, position);
+	//
+	//const float distanceSquared = distance * distance;
+	//
+	//return color * (intensity / distanceSquared);
+
+	// Todo 다시 구현하기
 	
-	const float distanceSquared = distance * distance;
-	
-	return color * (intensity / distanceSquared);
+	return glm::vec3(0);
 }
 
 bool PointLight::Intersect(const Ray& ray, float& tHit, glm::vec3& normal, float rayEpsilon) const

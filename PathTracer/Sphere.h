@@ -11,7 +11,7 @@
 class Sphere : public Shape
 {
 public:
-	Sphere(const glm::vec3& center, float radius, const glm::vec3& color = glm::vec3(1,1,1), const glm::vec3& emit = glm::vec3(0,0,0));
+	Sphere(const glm::vec3& center, const float radius);
 
 	virtual bool Intersect(const Ray& ray, float& tHit, glm::vec3& normal, float rayEpsilon) const override;
 	virtual float GetArea() const override;

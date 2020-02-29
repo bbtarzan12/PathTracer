@@ -15,9 +15,11 @@
 #include "Common.h"
 #include "LightVisibilityTester.h"
 #include "Math.h"
+#include "MatteMaterial.h"
 #include "Sphere.h"
 #include "PointLight.h"
 #include "Tracing.h"
+#include "SceneObject.h"
 
 CPURenderer::CPURenderer(const RendererOption& rendererOption)
 	: Renderer(rendererOption), renderOpenGL(true)
@@ -106,20 +108,17 @@ void CPURenderer::Init()
 	}
 
 	{
-		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(0, 1040, 0), 1000, glm::vec3(0.25f, 0.75f, 0.25f))));
-		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(0, -1000, 0), 1000)));
-		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(1040, 0, 0), 1000, glm::vec3(0.75f, 0.25f, 0.25f))));
-		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(-1040, 0, 0), 1000)));
-		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(0, 0, 1040), 1000, glm::vec3(0.25f, 0.25f, 0.75f))));
-		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(0, 0, -1040), 1000)));
-		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(20, 0, 14), 8, glm::vec3(1.0f, 0.15f, 0.15f))));
-		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(-14, 0, -20), 8, glm::vec3(0.15f, 1.0f, 1.0f))));
-		shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(14, 0, -20), 8, glm::vec3(0.15f, 0.15f, 1.0f))));
-		//shapes.push_back(std::make_shared<Sphere>(Sphere(glm::vec3(0, 5, 0), 8, glm::vec3(1.0f), glm::vec3(5))));
-		
-		//lights.push_back(std::make_shared<PointLight>(PointLight(glm::vec3(0, 10, 0), glm::vec3(1), 25)));
-		std::shared_ptr<Sphere> sphereLightShape = std::make_shared<Sphere>(Sphere(glm::vec3(0, 10, 0), 4, glm::vec3(1.0f), glm::vec3(3.0f)));
-		lights.push_back(std::make_shared<AreaLight>(AreaLight(sphereLightShape)));
+		// Todo : Code cleanup
+		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(0, 1040, 0), 1000)), std::make_shared<MatteMaterial>(glm::vec3(0.25f, 0.75f, 0.25f))));
+		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(0, -1000, 0), 1000)), std::make_shared<MatteMaterial>(glm::vec3(1.0f))));
+		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(1040, 0, 0), 1000)), std::make_shared<MatteMaterial>(glm::vec3(0.75f, 0.25f, 0.25f))));
+		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(-1040, 0, 0), 1000)), std::make_shared<MatteMaterial>(glm::vec3(0.75f, 0.25f, 0.25f))));
+		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(0, 0, 1040), 1000)), std::make_shared<MatteMaterial>(glm::vec3(0.25f, 0.25f, 0.75f))));
+		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(0, 0, -1040), 1000)), std::make_shared<MatteMaterial>(glm::vec3(1.0f))));
+		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(20, 0, 14), 8)), std::make_shared<MatteMaterial>(glm::vec3(1.0f, 0.15f, 0.15f))));
+		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(-14, 0, -20), 8)), std::make_shared<MatteMaterial>(glm::vec3(0.15f, 1.0f, 1.0f))));
+		sceneObjects.push_back(std::make_shared<SceneObject>(std::make_shared<Sphere>(Sphere(glm::vec3(14, 0, -20), 8)), std::make_shared<MatteMaterial>(glm::vec3(0.15f, 0.15f, 1.0f))));
+		lights.push_back(std::make_shared<AreaLight>(AreaLight(std::make_shared<Sphere>(Sphere(glm::vec3(0, 10, 0), 4)), glm::vec3(1.0f), 3.0f)));
 	}
 }
 
@@ -160,9 +159,12 @@ void CPURenderer::Release()
 {
 	GLFWManager::Release();
 
-	for (auto& shape : shapes)
+	for (auto& object : sceneObjects)
 	{
-		shape->ClearOpenGL();
+		if(const auto& shape = object->GetShape().lock())
+		{
+			shape->ClearOpenGL();
+		}
 	}
 }
 
@@ -266,8 +268,15 @@ void CPURenderer::Render(double deltaTime)
 
 	if (renderOpenGL)
 	{
-		for (auto& shape : shapes)
+		for (auto& object : sceneObjects)
 		{
+			const auto& shape = object->GetShape().lock();
+			const auto& material = object->GetMaterial().lock();
+			const glm::vec3& color = material->GetDefaultColorForDrawOpenGL();
+			
+			if(shape == nullptr || material == nullptr)
+				continue;
+
 			glUseProgram(shaderID);
 			glm::mat4 mvp = camera->proj * camera->view * shape->model;
 
@@ -275,7 +284,7 @@ void CPURenderer::Render(double deltaTime)
 			glUniformMatrix4fv(viewMatrixID, 1, GL_FALSE, &camera->view[0][0]);
 			glUniformMatrix4fv(modelMatrixID, 1, GL_FALSE, &shape->model[0][0]);
 			glUniform3f(lightID, 0, 0, 0);
-			glUniform3f(colorID, shape->color.r, shape->color.g, shape->color.b);
+			glUniform3fv(colorID, 1, &color[0]);
 
 			shape->DrawOpenGL();
 
@@ -362,33 +371,32 @@ glm::vec3 CPURenderer::CastRay(Ray& ray, int maxDepth, float epsilon)
 	for(int depth = 1; depth <= maxDepth; depth++)
 	{
 		IntersectInfo info{};
-		if (!PathTracing::TraceRay(ray, info, epsilon, shapes, lights))
+		if (!PathTracing::TraceRay(ray, info, epsilon, sceneObjects, lights))
 			break;
 		
-		const std::shared_ptr<Shape>& shape = info.shape.lock();
-		if (shape == nullptr)
+		const auto& shape = info.shape.lock();
+		const auto& material = info.material.lock();
+
+		//if(depth == 1)
+		L += pathWeight * info.emit;
+		
+		if (shape == nullptr || material == nullptr)
 			break;
 
-		if(depth == 1)
-		{
-			L += shape->emit;
-		}
-
 		const glm::vec3& hitWorldPoint = ray.origin + ray.direction * info.t;
-		const glm::vec3& hitWorldNormal = info.normal;
-		const glm::vec3& albedoColor = shape->color;
-		const glm::vec3& f = albedoColor * glm::one_over_pi<float>();
+
+		const auto& worldWo = -ray.direction;
 
 		for (auto& light : lights)
 		{
-			float lightPdf, distance;
-			glm::vec3 lightDir;
-			glm::vec3 lightRadiance = light->Sample(hitWorldPoint, lightDir, lightPdf, distance);
+			float distance;
+			glm::vec3 worldLightWi;
+			glm::vec3 directRadiance = light->Sample(hitWorldPoint, worldWo, info, material, distance, worldLightWi);
 
 			IntersectInfo lightInfo;
-			Ray lightRay(hitWorldPoint, lightDir, 0, distance);
+			Ray lightRay(hitWorldPoint, worldLightWi, 0, distance);
 
-			LightVisibilityTester visibilityTester(lightRay, lightInfo, epsilon, shapes, lights);
+			LightVisibilityTester visibilityTester(lightRay, lightInfo, epsilon, sceneObjects, lights);
 			light->Accept(visibilityTester);
 
 			if (!visibilityTester())
@@ -396,18 +404,15 @@ glm::vec3 CPURenderer::CastRay(Ray& ray, int maxDepth, float epsilon)
 				continue;
 			}
 			
-			L += pathWeight * f * lightRadiance * glm::max(0.0f, glm::dot(hitWorldNormal, lightDir)) / lightPdf;
+			L += pathWeight * directRadiance;
 		}
 
-		const float pdf = PathTracing::UniformHemispherePDF; // 새로운 Ray의 확률
-
-		const auto[normal, tangent, biTangent] = Math::WorldToTangent(hitWorldNormal);
-		const auto[cosTheta, r2] = PathTracing::RandomFloat2();
-		glm::vec3 sampleTangent = PathTracing::UniformSampleHemisphere(cosTheta, r2);
-		glm::vec3 sampleWorld = Math::TangentToWorld(sampleTangent, normal, tangent, biTangent);
-		glm::vec3 sampleNormal = glm::normalize(sampleWorld);
-
-		pathWeight = f * cosTheta / pdf;
+		glm::vec3 worldWi;
+		float pdf;
+		const glm::vec3& f = material->SampleF(info, worldWo, worldWi, pdf);
+		const float cosTheta = glm::max(0.0f, glm::dot(info.normal, worldWi));
+		
+		pathWeight *= f * cosTheta / pdf;
 
 		if(depth > 3)
 		{
@@ -419,7 +424,7 @@ glm::vec3 CPURenderer::CastRay(Ray& ray, int maxDepth, float epsilon)
 			pathWeight /= p;
 		}
 
-		ray = Ray(hitWorldPoint, sampleNormal, ray, 0);
+		ray = Ray(hitWorldPoint, worldWi, ray, 0);
 	}
 
 	return L;

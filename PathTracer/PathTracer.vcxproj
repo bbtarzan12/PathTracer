@@ -141,9 +141,11 @@
     <ClCompile Include="Bxdf.cpp" />
     <ClCompile Include="LightIntersectTester.cpp" />
     <ClCompile Include="LightVisibilityTester.cpp" />
+    <ClCompile Include="LambertianBRDF.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="MatteMaterial.cpp" />
+    <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="CPURenderer.cpp" />
@@ -174,9 +176,11 @@
     <ClInclude Include="LightIntersectTester.h" />
     <ClInclude Include="LightVisibilityTester.h" />
     <ClInclude Include="LightVisitor.h" />
+    <ClInclude Include="LambertianBRDF.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="MatteMaterial.h" />
+    <ClInclude Include="SceneObject.h" />
     <ClInclude Include="PinHoleCamera.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Random.h" />

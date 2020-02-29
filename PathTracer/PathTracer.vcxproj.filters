@@ -147,6 +147,12 @@
     <ClCompile Include="Shape.cpp">
       <Filter>소스 파일\Shapes</Filter>
     </ClCompile>
+    <ClCompile Include="SceneObject.cpp">
+      <Filter>소스 파일\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="LambertianBRDF.cpp">
+      <Filter>소스 파일\Materials\Bxdf</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -217,6 +223,12 @@
     </ClInclude>
     <ClInclude Include="Bxdf.h">
       <Filter>헤더 파일\Materials\Bxdf</Filter>
+    </ClInclude>
+    <ClInclude Include="LambertianBRDF.h">
+      <Filter>헤더 파일\Materials\Bxdf</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneObject.h">
+      <Filter>헤더 파일\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
