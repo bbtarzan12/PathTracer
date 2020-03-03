@@ -1,17 +1,5 @@
 ﻿#pragma once
 #include <glm/common.hpp>
-#include <glm/common.hpp>
-#include <glm/common.hpp>
-#include <glm/common.hpp>
-#include <glm/common.hpp>
-#include <glm/common.hpp>
-#include <glm/common.hpp>
-#include <glm/common.hpp>
-#include <glm/common.hpp>
-#include <glm/common.hpp>
-#include <glm/common.hpp>
-#include <glm/common.hpp>
-
 #include "Material.h"
 #include <memory>
 

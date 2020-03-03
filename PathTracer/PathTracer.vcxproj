@@ -145,6 +145,7 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="MatteMaterial.cpp" />
+    <ClCompile Include="MirrorMaterial.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Random.cpp" />
@@ -161,6 +162,7 @@
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shape.cpp" />
+    <ClCompile Include="SpecularBRDF.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Tracing.cpp" />
   </ItemGroup>
@@ -180,6 +182,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="MatteMaterial.h" />
+    <ClInclude Include="MirrorMaterial.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="PinHoleCamera.h" />
     <ClInclude Include="PointLight.h" />
@@ -188,6 +191,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="Shape.h" />
+    <ClInclude Include="SpecularBRDF.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Tracing.h" />
   </ItemGroup>

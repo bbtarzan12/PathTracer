@@ -153,6 +153,12 @@
     <ClCompile Include="LambertianBRDF.cpp">
       <Filter>소스 파일\Materials\Bxdf</Filter>
     </ClCompile>
+    <ClCompile Include="MirrorMaterial.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SpecularBRDF.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -229,6 +235,12 @@
     </ClInclude>
     <ClInclude Include="SceneObject.h">
       <Filter>헤더 파일\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="MirrorMaterial.h">
+      <Filter>헤더 파일\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="SpecularBRDF.h">
+      <Filter>헤더 파일\Materials\Bxdf</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

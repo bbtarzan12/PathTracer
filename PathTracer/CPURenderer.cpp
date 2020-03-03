@@ -1,25 +1,26 @@
 #include "CPURenderer.h"
-#include <iostream>
 #include <FreeImage/FreeImage.h>
 #include <glm/common.hpp>
+#include <iostream>
 
 #include "AreaLight.h"
+#include "Camera.h"
+#include "Common.h"
 #include "GLFWManager.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-#include "ShaderLoader.h"
-#include "Camera.h"
 #include "IntersectInfo.h"
-#include "Random.h"
-#include "Common.h"
 #include "LightVisibilityTester.h"
 #include "Math.h"
 #include "MatteMaterial.h"
-#include "Sphere.h"
+#include "MirrorMaterial.h"
 #include "PointLight.h"
-#include "Tracing.h"
+#include "Random.h"
 #include "SceneObject.h"
+#include "ShaderLoader.h"
+#include "Sphere.h"
+#include "Tracing.h"
 
 CPURenderer::CPURenderer(const RendererOption& rendererOption)
 	: Renderer(rendererOption), renderOpenGL(true)
@@ -109,16 +110,17 @@ void CPURenderer::Init()
 
 	{
 		// Todo : Code cleanup
-		//sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, 1040, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.25f, 0.75f, 0.25f))));
+		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, 1040, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.25f, 0.75f, 0.25f))));
 		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, -1000, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(1.0f))));
-		//sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(1040, 0, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.75f, 0.25f, 0.25f))));
-		//sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(-1040, 0, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.75f, 0.25f, 0.25f))));
-		//sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, 0, 1040), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.25f, 0.25f, 0.75f))));
-		//sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, 0, -1040), 1000)), std::make_unique<MatteMaterial>(glm::vec3(1.0f))));
+		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(1040, 0, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.75f, 0.25f, 0.25f))));
+		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(-1040, 0, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.75f, 0.25f, 0.25f))));
+		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, 0, 1040), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.25f, 0.25f, 0.75f))));
+		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, 0, -1040), 1000)), std::make_unique<MatteMaterial>(glm::vec3(1.0f))));
 		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(20, 7, 14), 8)), std::make_unique<MatteMaterial>(glm::vec3(1.0f, 0.15f, 0.15f))));
 		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(-14, 7, -20), 8)), std::make_unique<MatteMaterial>(glm::vec3(0.15f, 1.0f, 1.0f))));
 		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(14, 7, -20), 8)), std::make_unique<MatteMaterial>(glm::vec3(0.15f, 0.15f, 1.0f))));
-		lights.push_back(std::make_unique<AreaLight>(AreaLight(std::make_unique<Sphere>(Sphere(glm::vec3(0, 10, 0), 4)), glm::vec3(1.0f), 3.0f)));
+		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(-14, 7, 20), 8)), std::make_unique<MirrorMaterial>(glm::vec3(1.0f))));
+		lights.push_back(std::make_unique<AreaLight>(AreaLight(std::make_unique<Sphere>(Sphere(glm::vec3(0, 30, 0), 4)), glm::vec3(1.0f), 3.0f)));
 	}
 }
 
