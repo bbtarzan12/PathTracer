@@ -9,7 +9,7 @@ Shape::~Shape()
 	ClearOpenGL();
 }
 
-float Shape::GetPdf() const
+float Shape::GetPDF() const
 {
 	return 1.0f / GetArea();
 }

@@ -14,7 +14,7 @@ public:
 	virtual bool Intersect(const Ray& ray, float& tHit, glm::vec3& normal, float rayEpsilon) const = 0;
 	virtual float GetArea() const = 0;
 
-	virtual float GetPdf() const;
+	virtual float GetPDF() const;
 	virtual float GetPDF(const glm::vec3& point, const glm::vec3& wi) const;
 
 	// point가 주어지지 않았을 때

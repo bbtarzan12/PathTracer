@@ -1,6 +1,6 @@
 ﻿#include "Math.h"
 
-std::tuple<glm::vec3, glm::vec3> PathTracing::BuildTangentSpace(const glm::vec3 normal)
+std::tuple<glm::vec3, glm::vec3> PathTracing::BuildLocalSpace(const glm::vec3 normal)
 {
 	glm::vec3 tangent;
 	if (glm::abs(normal.x) > 0.1f)
@@ -17,7 +17,7 @@ std::tuple<glm::vec3, glm::vec3> PathTracing::BuildTangentSpace(const glm::vec3 
 	return std::make_tuple(tangent, biTangent);
 }
 
-glm::vec3 PathTracing::WorldToTangent(const glm::vec3& vector, const glm::vec3& normal, const glm::vec3& tangent,	const glm::vec3& biTangent)
+glm::vec3 PathTracing::WorldToLocal(const glm::vec3& vector, const glm::vec3& normal, const glm::vec3& tangent,	const glm::vec3& biTangent)
 {
 	return glm::vec3
 	{
@@ -27,7 +27,7 @@ glm::vec3 PathTracing::WorldToTangent(const glm::vec3& vector, const glm::vec3& 
 	};
 }
 
-glm::vec3 PathTracing::TangentToWorld(const glm::vec3& vector, const glm::vec3& normal, const glm::vec3& tangent,	const glm::vec3& biTangent)
+glm::vec3 PathTracing::LocalToWorld(const glm::vec3& vector, const glm::vec3& normal, const glm::vec3& tangent,	const glm::vec3& biTangent)
 {
 	return glm::vec3
 	{

@@ -115,9 +115,9 @@ void CPURenderer::Init()
 		//sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(-1040, 0, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.75f, 0.25f, 0.25f))));
 		//sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, 0, 1040), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.25f, 0.25f, 0.75f))));
 		//sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, 0, -1040), 1000)), std::make_unique<MatteMaterial>(glm::vec3(1.0f))));
-		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(20, 0, 14), 8)), std::make_unique<MatteMaterial>(glm::vec3(1.0f, 0.15f, 0.15f))));
-		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(-14, 0, -20), 8)), std::make_unique<MatteMaterial>(glm::vec3(0.15f, 1.0f, 1.0f))));
-		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(14, 0, -20), 8)), std::make_unique<MatteMaterial>(glm::vec3(0.15f, 0.15f, 1.0f))));
+		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(20, 7, 14), 8)), std::make_unique<MatteMaterial>(glm::vec3(1.0f, 0.15f, 0.15f))));
+		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(-14, 7, -20), 8)), std::make_unique<MatteMaterial>(glm::vec3(0.15f, 1.0f, 1.0f))));
+		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(14, 7, -20), 8)), std::make_unique<MatteMaterial>(glm::vec3(0.15f, 0.15f, 1.0f))));
 		lights.push_back(std::make_unique<AreaLight>(AreaLight(std::make_unique<Sphere>(Sphere(glm::vec3(0, 10, 0), 4)), glm::vec3(1.0f), 3.0f)));
 	}
 }
@@ -299,7 +299,7 @@ void CPURenderer::Render(double deltaTime)
 			previousColor.g = glm::pow(previousColor.g, PathTracing::GAMMA_DECODING);
 			previousColor.b = glm::pow(previousColor.b, PathTracing::GAMMA_DECODING);
 
-			glm::vec3 color = glm::clamp(CastRay(ray, 5), 0.0f, 1.0f);
+			glm::vec3 color = CastRay(ray, 5);
 
 			const glm::vec3 resultColor = (previousColor * static_cast<float>(frame - 1) + color) / static_cast<float>(frame);
 			frameBuffer[i * 3] = glm::pow(resultColor.r, PathTracing::GAMMA_COMPRESSION);
@@ -402,7 +402,7 @@ glm::vec3 CPURenderer::CastRay(Ray& ray, int maxDepth, float epsilon)
 		float pdf;
 		const glm::vec3& f = material->SampleF(info, worldWo, worldWi, pdf);
 		const float cosTheta = glm::max(0.0f, glm::dot(info.normal, worldWi));
-		
+
 		pathWeight *= f * cosTheta / pdf;
 
 		if(depth > 3)

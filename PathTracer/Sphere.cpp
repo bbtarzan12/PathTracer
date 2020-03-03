@@ -82,8 +82,8 @@ std::tuple<glm::vec3, glm::vec3> Sphere::Sample() const
 
 std::tuple<glm::vec3, glm::vec3> Sphere::Sample(const glm::vec3& point) const
 {
-	glm::vec3 wc = glm::normalize(point - center);
-	auto [wcX, wcY] = PathTracing::BuildTangentSpace(wc);
+	glm::vec3 normal = glm::normalize(point - center);
+	auto [tangent, biTangent] = PathTracing::BuildLocalSpace(normal);
 
 	float distance = glm::distance(point, center);
 	float distance2 = distance * distance;
@@ -94,11 +94,11 @@ std::tuple<glm::vec3, glm::vec3> Sphere::Sample(const glm::vec3& point) const
 	float sinTheta2 = radius2 / distance2;
 	float cosThetaMax = glm::sqrt(glm::max(0.0f, 1.0f - sinTheta2));
 	auto[r1, r2] = PathTracing::RandomFloat2();
-	glm::vec3 sampleDir = PathTracing::UniformSampleCone(r1, r2, cosThetaMax, wcX, wcY, wc);
-	Ray ray(point, sampleDir, 0.0f);
+	glm::vec3 sampleDir = PathTracing::UniformSampleCone(r1, r2, cosThetaMax);
+	glm::vec3 worldDir = PathTracing::LocalToWorld(sampleDir, normal, tangent, biTangent);
+	Ray ray(point, worldDir, 0.0f);
 	
 	float tHit;
-	glm::vec3 normal;
 	if (!Intersect(ray, tHit, normal, 0.001f))
 		tHit = glm::dot(center - point, glm::normalize(ray.direction));
 

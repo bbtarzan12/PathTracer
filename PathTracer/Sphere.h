@@ -3,10 +3,6 @@
 #include "Shape.h"
 #include <glm/glm.hpp>
 #include <GL/glew.h>
-#include <glm/common.hpp>
-#include <glm/common.hpp>
-#include <glm/common.hpp>
-#include <glm/common.hpp>
 
 class Sphere : public Shape
 {

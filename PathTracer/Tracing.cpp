@@ -56,7 +56,7 @@ bool PathTracing::TraceRay(const Ray& ray, IntersectInfo& info, const float epsi
 		return false;
 	}
 
-	auto[tangent, biTangent] = BuildTangentSpace(info.normal);
+	auto[tangent, biTangent] = BuildLocalSpace(info.normal);
 
 	info.tangent = tangent;
 	info.biTangent = biTangent;
