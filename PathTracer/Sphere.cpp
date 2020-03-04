@@ -9,7 +9,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext/scalar_constants.hpp>
 #include <glm/gtx/transform.hpp>
-#include <glm/gtc/matrix_transform.hpp> 
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "Math.h"
 #include "Random.h"
@@ -50,7 +50,7 @@ bool Sphere::Intersect(const Ray& ray, float& tHit, glm::vec3& normal, float ray
 			return false;
 	}
 
-	normal = glm::normalize(oc);
+	normal = glm::normalize(ray.direction * tHit + oc);
 	return true;
 }
 

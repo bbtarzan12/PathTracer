@@ -6,8 +6,6 @@
 
 namespace PathTracing
 {
-	uint32_t _random();
-
 	float RandomFloat();
 
 	std::tuple<float, float> RandomFloat2();

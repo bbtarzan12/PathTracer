@@ -33,7 +33,7 @@ CPURenderer::~CPURenderer()
 	std::cout << "[Renderer] Release CPURenderer" << std::endl;
 	glDeleteTextures(1, &rayTextureID);
 	FreeImage_DeInitialise();
-	delete frameBuffer;
+	delete[] frameBuffer;
 }
 
 void CPURenderer::Init()
@@ -201,7 +201,7 @@ void CPURenderer::HandleKeyboard(int key, int scancode, int action, int mods)
 		}
 
 		FreeImage_Unload(image);
-		delete pixels;
+		delete[] pixels;
 	}
 }
 
@@ -244,7 +244,7 @@ void CPURenderer::HandleResize(int width, int height)
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	delete frameBuffer;
+	delete[] frameBuffer;
 	frameBuffer = new float[width * height * 3];
 	frame = 1;
 }
@@ -367,6 +367,9 @@ glm::vec3 CPURenderer::CastRay(Ray& ray, int maxDepth, float epsilon)
 		IntersectInfo info{};
 		if (!PathTracing::TraceRay(ray, info, epsilon, sceneObjects, lights))
 			break;
+
+		if (glm::any(glm::isnan(info.normal)) || glm::any(glm::isinf(info.normal)))
+			break;
 		
 		const auto& shape = info.shape;
 		const auto& material = info.material;
@@ -376,7 +379,7 @@ glm::vec3 CPURenderer::CastRay(Ray& ray, int maxDepth, float epsilon)
 		if (shape == nullptr || material == nullptr)
 			break;
 
-		const glm::vec3& hitWorldPoint = (ray.origin + ray.direction * info.t) + (info.normal * epsilon);
+		const glm::vec3& hitWorldPoint = (ray.origin + ray.direction * info.t);
 
 		const auto& worldWo = -ray.direction;
 

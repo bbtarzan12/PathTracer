@@ -153,11 +153,14 @@
     <ClCompile Include="LambertianBRDF.cpp">
       <Filter>소스 파일\Materials\Bxdf</Filter>
     </ClCompile>
+    <ClCompile Include="MetalMaterial.cpp">
+      <Filter>소스 파일\Materials</Filter>
+    </ClCompile>
     <ClCompile Include="MirrorMaterial.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Materials</Filter>
     </ClCompile>
     <ClCompile Include="SpecularBRDF.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Materials\Bxdf</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -241,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="SpecularBRDF.h">
       <Filter>헤더 파일\Materials\Bxdf</Filter>
+    </ClInclude>
+    <ClInclude Include="MetalMaterial.h">
+      <Filter>헤더 파일\Materials</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
