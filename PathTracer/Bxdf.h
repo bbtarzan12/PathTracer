@@ -1,6 +1,21 @@
 ﻿#pragma once
 #include <glm/vec3.hpp>
 
+/*
+ *                  ^
+ *                  │ z
+ *                  │
+ *                  │
+ *                  │        x
+ *                  /──────────>
+ *                 /
+ *                /
+ *             y /
+ *              └
+ *
+ *  BxDF에서는 이 로컬 좌표계를 사용한다
+ */
+
 class Bxdf
 {
 public:
@@ -15,5 +30,12 @@ public:
 
 	// 기본 PDF는 반구를 Uniform하게 샘플링한다고 가정
 	virtual float PDF(const glm::vec3& wo, const glm::vec3& wi) const;
+
+protected:
+
+	static float CosTheta(const glm::vec3& v);
+	static float SinTheta(const glm::vec3& v);
+	static float CosPhi(const glm::vec3& v);
+	static float SinPhi(const glm::vec3& v);
 	
 };
