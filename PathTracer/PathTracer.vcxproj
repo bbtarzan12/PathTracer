@@ -22,32 +22,32 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{ED7AE157-A392-4B45-98EA-C13F3D8DF510}</ProjectGuid>
     <RootNamespace>PathTracer</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -153,6 +153,10 @@
   <ItemGroup>
     <ClCompile Include="AreaLight.cpp" />
     <ClCompile Include="Bxdf.cpp" />
+    <ClCompile Include="FresnelConductor.cpp" />
+    <ClCompile Include="FresnelDielectric.cpp" />
+    <ClCompile Include="FresnelNoOp.cpp" />
+    <ClCompile Include="GlassMaterial.cpp" />
     <ClCompile Include="LightIntersectTester.cpp" />
     <ClCompile Include="LightVisibilityTester.cpp" />
     <ClCompile Include="LambertianBRDF.cpp" />
@@ -178,15 +182,22 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="SpecularBRDF.cpp" />
+    <ClCompile Include="SpecularBTDF.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Tracing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AreaLight.h" />
+    <ClInclude Include="bitmask.hpp" />
     <ClInclude Include="Bxdf.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="CPURenderer.h" />
+    <ClInclude Include="Fresnel.h" />
+    <ClInclude Include="FresnelConductor.h" />
+    <ClInclude Include="FresnelDielectric.h" />
+    <ClInclude Include="FresnelNoOp.h" />
+    <ClInclude Include="GlassMaterial.h" />
     <ClInclude Include="GLFWManager.h" />
     <ClInclude Include="IntersectInfo.h" />
     <ClInclude Include="Light.h" />
@@ -208,6 +219,7 @@
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="SpecularBRDF.h" />
+    <ClInclude Include="SpecularBTDF.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Tracing.h" />
   </ItemGroup>

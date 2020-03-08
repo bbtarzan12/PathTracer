@@ -1,9 +1,8 @@
 ﻿#include "SpecularBRDF.h"
+#include "Fresnel.h"
 
-#include <glm/detail/func_geometric.inl>
-
-SpecularBRDF::SpecularBRDF(const glm::vec3& R)
-	: R(R)
+SpecularBRDF::SpecularBRDF(const glm::vec3& R, std::unique_ptr<Fresnel> fresnel)
+	:Bxdf(BxdfType::REFLECTION), R(R), fresnel(std::move(fresnel))
 {
 	
 }
@@ -19,7 +18,7 @@ glm::vec3 SpecularBRDF::SampleF(const glm::vec3& wo, glm::vec3& wi, float& pdf) 
 
 	pdf = 1.0f;
 
-	return R / CosTheta(wi);
+	return fresnel->Calculate(CosTheta(wo)) * R / glm::abs(CosTheta(wi));
 }
 
 const glm::vec3& SpecularBRDF::GetR() const

@@ -1,5 +1,7 @@
 ﻿#pragma once
-#include <glm/vec3.hpp>
+#include <glm/glm.hpp>
+
+#include "bitmask.hpp"
 
 /*
  *                  ^
@@ -16,9 +18,21 @@
  *  BxDF에서는 이 로컬 좌표계를 사용한다
  */
 
+enum class BxdfType
+{
+	REFLECTION = 0x01,
+	TRANSMISSION = 0x02,
+	ALL = REFLECTION | TRANSMISSION,
+	_bitmask_value_mask = ALL
+};
+BITMASK_DEFINE(BxdfType)
+
+using namespace Bitmask;
+
 class Bxdf
 {
 public:
+	explicit Bxdf(const BxdfType& type);
 	virtual ~Bxdf() = default;
 
 	// wo와 wi가 주어졌을 때 F계산
@@ -31,11 +45,15 @@ public:
 	// 기본 PDF는 반구를 Uniform하게 샘플링한다고 가정
 	virtual float PDF(const glm::vec3& wo, const glm::vec3& wi) const;
 
-protected:
+	bool MatchType(const bitmask<BxdfType>& other) const;
+	const bitmask<BxdfType>& GetType() const;
 
+protected:
 	static float CosTheta(const glm::vec3& v);
 	static float SinTheta(const glm::vec3& v);
 	static float CosPhi(const glm::vec3& v);
 	static float SinPhi(const glm::vec3& v);
-	
+
+protected:
+	BxdfType type;
 };

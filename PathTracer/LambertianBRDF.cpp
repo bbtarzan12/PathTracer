@@ -3,7 +3,7 @@
 #include <glm/gtc/constants.inl>
 
 LambertianBrdf::LambertianBrdf(const glm::vec3& R)
-	:R(R)
+	:Bxdf(BxdfType::REFLECTION), R(R)
 {
 	
 }

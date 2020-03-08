@@ -26,7 +26,7 @@ glm::vec3 AreaLight::Sample(const glm::vec3& point, const glm::vec3& worldWo, co
 	const float pdf = shape->GetPDF(point, worldWi);
 	const glm::vec3 f = material->CalculateF(info, worldWo, worldWi);
 	const glm::vec3 radiance = color * intensity;
-	const float cosTheta = glm::max(0.0f, glm::dot(info.normal, worldWi));
+	const float cosTheta = glm::abs(glm::dot(info.normal, worldWi));
 
 	return f * radiance * cosTheta / pdf ;
 }

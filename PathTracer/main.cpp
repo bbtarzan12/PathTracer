@@ -1,7 +1,6 @@
 #include "CPURenderer.h"
 #include "PinHoleCamera.h"
 
-
 int main()
 {
 	const int width = 1280 / 2;
@@ -17,6 +16,4 @@ int main()
 	renderer->SetCamera(std::move(camera));
 	renderer->Start();
 	renderer->Release();
-
-	return 0;
 }

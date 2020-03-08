@@ -9,6 +9,11 @@ uint32_t lcg_rand(uint32_t *state)
 	return *state = static_cast<uint64_t>(*state) * 279470273u % 0xfffffffb;
 }
 
+int PathTracing::RandomInt(const int min, const int max)
+{
+	return min + lcg_rand(&state) % static_cast<int>(max - min + 1);
+}
+
 float PathTracing::RandomFloat()
 {
 	return static_cast<float>(lcg_rand(&state)) / 0xffffffff;

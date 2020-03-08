@@ -6,6 +6,9 @@
 
 namespace PathTracing
 {
+	// [min, max]
+	int RandomInt(const int min, const int max);
+	
 	float RandomFloat();
 
 	std::tuple<float, float> RandomFloat2();

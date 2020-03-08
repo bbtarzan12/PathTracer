@@ -1,11 +1,14 @@
 #pragma once
 #include <glm/glm.hpp>
-#include <memory>
+#include "bitmask.hpp"
 
 struct IntersectInfo;
 class Material;
 class LightVisitor;
 class Ray;
+enum class BxdfType;
+
+using namespace Bitmask;
 
 class Light
 {

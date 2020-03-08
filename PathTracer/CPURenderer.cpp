@@ -4,8 +4,10 @@
 #include <iostream>
 
 #include "AreaLight.h"
+#include "Bxdf.h"
 #include "Camera.h"
 #include "Common.h"
+#include "GlassMaterial.h"
 #include "GLFWManager.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -111,14 +113,14 @@ void CPURenderer::Init()
 	{
 		// Todo : Code cleanup
 		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, 1040, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.25f, 0.75f, 0.25f))));
-		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, -1000, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(1.0f))));
+		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, -1001, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(1.0f))));
 		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(1040, 0, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.75f, 0.25f, 0.25f))));
 		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(-1040, 0, 0), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.75f, 0.25f, 0.25f))));
 		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, 0, 1040), 1000)), std::make_unique<MatteMaterial>(glm::vec3(0.25f, 0.25f, 0.75f))));
 		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(0, 0, -1040), 1000)), std::make_unique<MatteMaterial>(glm::vec3(1.0f))));
 		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(20, 7, 14), 8)), std::make_unique<MatteMaterial>(glm::vec3(1.0f, 0.15f, 0.15f))));
 		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(-14, 7, -20), 8)), std::make_unique<MatteMaterial>(glm::vec3(0.15f, 1.0f, 1.0f))));
-		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(14, 7, -20), 8)), std::make_unique<MatteMaterial>(glm::vec3(0.15f, 0.15f, 1.0f))));
+		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(14, 7, -20), 8)), std::make_unique<GlassMaterial>(glm::vec3(1.0f), glm::vec3(1.0f), 1.5f)));
 		sceneObjects.push_back(std::make_unique<SceneObject>(std::make_unique<Sphere>(Sphere(glm::vec3(-14, 7, 20), 8)), std::make_unique<MirrorMaterial>(glm::vec3(1.0f))));
 		lights.push_back(std::make_unique<AreaLight>(AreaLight(std::make_unique<Sphere>(Sphere(glm::vec3(0, 30, 0), 4)), glm::vec3(1.0f), 3.0f)));
 	}
@@ -209,7 +211,7 @@ void CPURenderer::HandleMouseClick(int button, int action, int mods)
 {
 	if (GLFWManager::IsMouseDown(GLFW_MOUSE_BUTTON_MIDDLE))
 	{
-		GLFWManager::SetCursorToPos(rendererOption.width / 2, rendererOption.height / 2);
+		GLFWManager::SetCursorToPos(rendererOption.width / 2.0, rendererOption.height / 2.0);
 		glfwSetInputMode(GLFWManager::GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 	else
@@ -266,7 +268,7 @@ void CPURenderer::Render(double deltaTime)
 		{
 			const auto& shape = object->GetShape();
 			const auto& material = object->GetMaterial();
-			const glm::vec3& color = material->GetDefaultColorForDrawOpenGL();
+			const glm::vec3& color = glm::vec3(1.0f); // Todo : OpenGL Material
 			
 			if(shape == nullptr || material == nullptr)
 				continue;
@@ -362,6 +364,7 @@ glm::vec3 CPURenderer::CastRay(Ray& ray, int maxDepth, float epsilon)
 {
 	glm::vec3 L(0); // Lo
 	glm::vec3 pathWeight(1.0f); // BSDF * Cos / PDF;
+	bitmask<BxdfType> type = BxdfType::ALL;
 	for(int depth = 1; depth <= maxDepth; depth++)
 	{
 		IntersectInfo info{};
@@ -379,7 +382,7 @@ glm::vec3 CPURenderer::CastRay(Ray& ray, int maxDepth, float epsilon)
 		if (shape == nullptr || material == nullptr)
 			break;
 
-		const glm::vec3& hitWorldPoint = (ray.origin + ray.direction * info.t);
+		const glm::vec3& hitWorldPoint = ray.origin + ray.direction * info.t;
 
 		const auto& worldWo = -ray.direction;
 
@@ -405,8 +408,8 @@ glm::vec3 CPURenderer::CastRay(Ray& ray, int maxDepth, float epsilon)
 
 		glm::vec3 worldWi;
 		float pdf;
-		const glm::vec3& f = material->SampleF(info, worldWo, worldWi, pdf);
-		const float cosTheta = glm::max(0.0f, glm::dot(info.normal, worldWi));
+		const glm::vec3& f = material->SampleF(info, worldWo, worldWi, pdf, type);
+		const float cosTheta = glm::abs(glm::dot(info.normal, worldWi));
 
 		pathWeight *= f * cosTheta / pdf;
 
@@ -420,7 +423,7 @@ glm::vec3 CPURenderer::CastRay(Ray& ray, int maxDepth, float epsilon)
 			pathWeight /= p;
 		}
 
-		ray = Ray(hitWorldPoint, worldWi, ray, 0);
+		ray = Ray(hitWorldPoint, worldWi, ray, epsilon);
 	}
 
 	return L;

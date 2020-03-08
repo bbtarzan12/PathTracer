@@ -27,7 +27,7 @@ float Shape::GetPDF(const glm::vec3& point, const glm::vec3& wi) const
 
 	const glm::vec3 hitPoint = ray.origin + ray.direction * tHit;
 	const float distance = glm::distance(point, hitPoint);
-	const float cosTheta = glm::max(0.0f, glm::dot(normal, -wi));
+	const float cosTheta = glm::abs(glm::dot(normal, -wi));
 
 	return (distance * distance) / (cosTheta * GetArea());
 }

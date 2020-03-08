@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <memory>
-
 #include "Light.h"
+
 class Shape;
 
 class AreaLight : public Light

@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="소스 파일\imgui">
-      <UniqueIdentifier>{fbac9bf6-4a02-438a-a28f-3c16331890d2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\Shaders">
       <UniqueIdentifier>{2c12353e-5aea-40c3-8659-d9c51c4f95d8}</UniqueIdentifier>
     </Filter>
@@ -73,28 +70,46 @@
     <Filter Include="소스 파일\Materials\Bxdf">
       <UniqueIdentifier>{2db42f1b-5d8a-4048-9c76-89263a694d37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Library">
+      <UniqueIdentifier>{e4d6eba7-c46a-4310-afa5-c167b4118221}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Library">
+      <UniqueIdentifier>{ce23addc-f2be-4cd5-8893-edf10ed215ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Library\imgui">
+      <UniqueIdentifier>{fbac9bf6-4a02-438a-a28f-3c16331890d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Library\bitmask">
+      <UniqueIdentifier>{d8e937b9-5adc-4e8d-9fec-525b860bdcc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Materials\Fresnel">
+      <UniqueIdentifier>{f778c5a4-9fbf-4fed-b259-c6c0d70af8bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Materials\Fresnel">
+      <UniqueIdentifier>{3b1cb8b8-e0b6-4585-98b7-c53fc30e2272}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_demo.cpp">
-      <Filter>소스 파일\imgui</Filter>
+      <Filter>소스 파일\Library\imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_draw.cpp">
-      <Filter>소스 파일\imgui</Filter>
+      <Filter>소스 파일\Library\imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_impl_glfw.cpp">
-      <Filter>소스 파일\imgui</Filter>
+      <Filter>소스 파일\Library\imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_impl_opengl3.cpp">
-      <Filter>소스 파일\imgui</Filter>
+      <Filter>소스 파일\Library\imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_widgets.cpp">
-      <Filter>소스 파일\imgui</Filter>
+      <Filter>소스 파일\Library\imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
-      <Filter>소스 파일\imgui</Filter>
+      <Filter>소스 파일\Library\imgui</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
       <Filter>소스 파일\Renderer</Filter>
@@ -141,9 +156,6 @@
     <ClCompile Include="MatteMaterial.cpp">
       <Filter>소스 파일\Materials</Filter>
     </ClCompile>
-    <ClCompile Include="Bxdf.cpp">
-      <Filter>소스 파일\Materials\Bxdf</Filter>
-    </ClCompile>
     <ClCompile Include="Shape.cpp">
       <Filter>소스 파일\Shapes</Filter>
     </ClCompile>
@@ -161,6 +173,24 @@
     </ClCompile>
     <ClCompile Include="SpecularBRDF.cpp">
       <Filter>소스 파일\Materials\Bxdf</Filter>
+    </ClCompile>
+    <ClCompile Include="SpecularBTDF.cpp">
+      <Filter>소스 파일\Materials\Bxdf</Filter>
+    </ClCompile>
+    <ClCompile Include="GlassMaterial.cpp">
+      <Filter>소스 파일\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="Bxdf.cpp">
+      <Filter>소스 파일\Materials\Bxdf</Filter>
+    </ClCompile>
+    <ClCompile Include="FresnelConductor.cpp">
+      <Filter>소스 파일\Materials\Fresnel</Filter>
+    </ClCompile>
+    <ClCompile Include="FresnelDielectric.cpp">
+      <Filter>소스 파일\Materials\Fresnel</Filter>
+    </ClCompile>
+    <ClCompile Include="FresnelNoOp.cpp">
+      <Filter>소스 파일\Materials\Fresnel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +277,27 @@
     </ClInclude>
     <ClInclude Include="MetalMaterial.h">
       <Filter>헤더 파일\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="SpecularBTDF.h">
+      <Filter>헤더 파일\Materials\Bxdf</Filter>
+    </ClInclude>
+    <ClInclude Include="GlassMaterial.h">
+      <Filter>헤더 파일\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="bitmask.hpp">
+      <Filter>헤더 파일\Library\bitmask</Filter>
+    </ClInclude>
+    <ClInclude Include="Fresnel.h">
+      <Filter>헤더 파일\Materials\Fresnel</Filter>
+    </ClInclude>
+    <ClInclude Include="FresnelConductor.h">
+      <Filter>헤더 파일\Materials\Fresnel</Filter>
+    </ClInclude>
+    <ClInclude Include="FresnelDielectric.h">
+      <Filter>헤더 파일\Materials\Fresnel</Filter>
+    </ClInclude>
+    <ClInclude Include="FresnelNoOp.h">
+      <Filter>헤더 파일\Materials\Fresnel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

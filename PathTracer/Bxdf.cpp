@@ -2,6 +2,11 @@
 
 #include "Random.h"
 
+Bxdf::Bxdf(const BxdfType& type)
+	:type(type)
+{
+}
+
 glm::vec3 Bxdf::SampleF(const glm::vec3& wo, glm::vec3& wi, float& pdf) const
 {
 	const auto[r1, r2] = PathTracing::RandomFloat2();
@@ -14,6 +19,16 @@ glm::vec3 Bxdf::SampleF(const glm::vec3& wo, glm::vec3& wi, float& pdf) const
 float Bxdf::PDF(const glm::vec3& wo, const glm::vec3& wi) const
 {
 	return PathTracing::UniformHemispherePDF;
+}
+
+bool Bxdf::MatchType(const bitmask<BxdfType>& other) const
+{
+	return (type & other) == type;
+}
+
+const bitmask<BxdfType>& Bxdf::GetType() const
+{
+	return type;
 }
 
 float Bxdf::CosTheta(const glm::vec3& v)
